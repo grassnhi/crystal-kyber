@@ -50,15 +50,15 @@ module compress#(
     reg [12+D:0] temp_stage1; 
     reg [11+D:0] temp_stage2; 
     
-    assign t = 1 << D;          // t = 2^D
-    assign not_t = t - 1;
+    assign t        = 1 << D;          // t = 2^D
+    assign not_t    = t - 1;
     
     // temp = ((in_val << D) + (Q >> 1)) => Calculate (2^d * x + q//2) / q
-    assign x = (in_val << D);   
-    assign half_q = (Q >> 1);
-    assign temp = x + half_q; 
+    assign x            = (in_val << D);   
+    assign half_q       = (Q >> 1);
+    assign temp         = x + half_q; 
     assign out_val_temp = temp_stage2 & not_t;
-    assign div_q = temp_stage1 / Q;
+    assign div_q        = temp_stage1 / Q;
 
     // Stage 1: Load temp to FF
     always @(posedge clk or negedge rst_n) begin
@@ -81,9 +81,9 @@ module compress#(
     // Stage 4: Perform modulo operation (bitwise AND)
     always @(posedge clk or negedge rst_n) begin
         if (~rst_n) begin
-            out_val <= 0;
+            out_val     <= 0;
         end else begin
-            out_val <= out_val_temp;
+            out_val     <= out_val_temp;
         end
     end
 
@@ -94,11 +94,9 @@ module compress#(
 
     always @(*) begin
         // Compute t = 2^d
-        t = 1 << D;
-
+        t       = 1 << D;
         // Calculate (2^d * x + q//2) / q
-        temp = ((in_val << D) + (Q >> 1)) / Q;
-
+        temp    = ((in_val << D) + (Q >> 1)) / Q;
         // Calculate modulo 2^d
         out_val = temp & (~t);
     end
