@@ -45,13 +45,13 @@ module decompress #(
             shift_11_stage1 <= 16'b0;
             shift_10_stage1 <= 16'b0;
             shift_8_stage1  <= 16'b0;
-            shift_0_stage1  <= 16'b0;
+            // shift_0_stage1  <= 16'b0;
         end
         else begin
             shift_11_stage1 <= (in_val << 11);   // X * 2^11
             shift_10_stage1 <= (in_val << 10);   // X * 2^10
             shift_8_stage1  <= (in_val << 8);    // X * 2^8
-            shift_0_stage1  <= (in_val << 0);    // X * 2^0 (no shift)
+            // shift_0_stage1  <= (in_val << 0);    // X * 2^0 (no shift)
         end
     end
 
@@ -64,7 +64,8 @@ module decompress #(
         end
         else begin
             sum_stage2_a    <= shift_11_stage1 + shift_10_stage1;  // (X * 2^11) + (X * 2^10)
-            sum_stage2_b    <= shift_8_stage1  + shift_0_stage1;   // (X * 2^8) + (X * 2^0)
+            // sum_stage2_b    <= shift_8_stage1  + shift_0_stage1;   // (X * 2^8) + (X * 2^0)
+            sum_stage2_b    <= shift_8_stage1  + in_val;
             total           <= sum_stage2_a + sum_stage2_b;
         end
     end

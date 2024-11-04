@@ -47,6 +47,7 @@ module compress#(
     wire [D-1:0] out_val_temp;
     wire [11+D:0] div_q;
 
+    reg [11+D:0] x_reg;
     reg [12+D:0] temp_stage1; 
     reg [11+D:0] temp_stage2; 
     
@@ -55,7 +56,7 @@ module compress#(
     
     // temp = ((in_val << D) + (Q >> 1)) => Calculate (2^d * x + q//2) / q
     assign x            = (in_val << D);   
-    assign half_q       = (Q >> 1);
+    assign half_q       = (Q >> 1); 
     assign temp         = x + half_q; 
     assign out_val_temp = temp_stage2 & not_t;
     assign div_q        = temp_stage1 / Q;
@@ -64,7 +65,9 @@ module compress#(
     always @(posedge clk or negedge rst_n) begin
         if (~rst_n) begin
             temp_stage1 <= 0;
+            x_reg <= 0;
         end else begin
+            x_reg <= x;
             temp_stage1 <= temp;
         end
     end
