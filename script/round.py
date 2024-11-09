@@ -97,6 +97,7 @@ def generate_theta_step():
                 x2 = (x + 2) % 5
                 # Apply the chi transformation as per the provided formula
                 line = f"   assign A_chi[{x}][{y}][{z}]     = A[{x}][{y}][{z}] ^ ((~A[{x1}][{y}][{z}]) & A[{x2}][{y}][{z}]);\n"
+                # line = f"   assign A_chi[{x}][{y}][{z}]     = A[{x}][{y}][{z}] ^ ((A[{x1}][{y}][{z}] ^ 1'b1) & A[{x2}][{y}][{z}]);\n"
                 lines.append(line)
 
 ################################ IOTA ################################
