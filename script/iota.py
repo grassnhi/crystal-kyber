@@ -1,6 +1,6 @@
-filename = "iota_module.v"
+filename = "iota_step.v"
 
-def generate_iota_module():
+def generate_iota_step():
     lines = []
     lines.append("module iota_step(\n")
     lines.append("    input [1599:0] S_in,        // Input: 5x5 state matrix (1600 bits)\n")
@@ -63,7 +63,7 @@ def generate_iota_module():
 # Generate the iota module and write to a file
 try:
     with open(filename, "w") as file:
-        file.writelines(generate_iota_module())
+        file.writelines(generate_iota_step())
     print(f"Verilog code for the iota module has been successfully generated in '{filename}'")
 except IOError as e:
     print(f"An error occurred while writing the file: {e}")

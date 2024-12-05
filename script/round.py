@@ -1,9 +1,9 @@
 # Python script to generate Verilog code for the Keccak θ step
-# Output to "theta_step.v"
+# Output to "round_step.v"
 
-filename = "kcck_round.v"
+filename = "round_step.v"
 
-def generate_theta_step():
+def generate_round_step():
     lines = []
     lines.append("module kcck_round(\n")
     lines.append("    input [1599:0] S_in,        // Input: 5x5 state matrix (1600 bits)\n")
@@ -97,6 +97,7 @@ def generate_theta_step():
                 x2 = (x + 2) % 5
                 # Apply the chi transformation as per the provided formula
                 line = f"   assign A_chi[{x}][{y}][{z}]     = A[{x}][{y}][{z}] ^ ((~A[{x1}][{y}][{z}]) & A[{x2}][{y}][{z}]);\n"
+                # line = f"   assign A_chi[{x}][{y}][{z}]     = A[{x}][{y}][{z}] ^ ((A[{x1}][{y}][{z}] ^ 1'b1) & A[{x2}][{y}][{z}]);\n"
                 lines.append(line)
 
 ################################ IOTA ################################
@@ -143,6 +144,6 @@ def generate_theta_step():
 
 # Write the Verilog code to the file with UTF-8 encoding
 with open(filename, "w", encoding="utf-8") as file:
-    file.writelines(generate_theta_step())
+    file.writelines(generate_round_step())
 
 print(f"Verilog code for round has been generated in '{filename}'")

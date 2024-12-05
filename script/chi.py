@@ -1,6 +1,6 @@
-filename = "chi_module.v"
+filename = "chi_step.v"
 
-def generate_chi_module(w):
+def generate_chi_step(w):
     lines = []
     lines.append(f"module chi(input [1599:0] S_in, output [1599:0] S_out);\n")
     lines.append("   wire [63:0] A      [4:0][4:0];\n")
@@ -39,7 +39,7 @@ w = 64
 
 try:
     with open(filename, "w") as file:
-        file.writelines(generate_chi_module(w))
+        file.writelines(generate_chi_step(w))
     print(f"Verilog code for the chi module has been successfully generated in '{filename}'")
 except IOError as e:
     print(f"An error occurred while writing the file: {e}")
