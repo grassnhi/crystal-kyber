@@ -223,10 +223,4 @@ generate
     end
 endgenerate
 
-// generate
-//     for (genvar i = 0; i < 1600; i = i + 64) begin: apply_chi
-//             assign S_out[i+:64] = S[i+:64] ^ (~S[i+64+:64] & S[i+128+:64]);
-//         end
-// endgenerate
-
 endmodule
