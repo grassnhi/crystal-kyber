@@ -1,11 +1,11 @@
 `include "reduce.v"
 
 module mult(
-    output [11:0] res,
+    input clk,
+    input rst,
     input [11:0] in1,
     input [11:0]in2,
-    input clk,
-    input rst
+    output [11:0] res
 );
     reg [11:0] reg1;
     reg [11:0] reg2;
@@ -22,7 +22,11 @@ module mult(
             reg2 <= in2;
         end
     end
-    wire [23:0]product;
+    wire [23:0] product;
     assign product = reg1*reg2;
-    K_2REG_reduce mod(res, product, clk, rst);
+    reg [23:0] product_reg;
+    always @(posedge clk)begin
+        product_reg <= product;
+    end
+    reduce mod(clk, rst, product_reg, res);
 endmodule

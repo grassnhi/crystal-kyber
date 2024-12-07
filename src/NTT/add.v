@@ -1,8 +1,8 @@
 module add(
-    output[11:0] res,
     input[11:0] in1,
     input[11:0] in2,
-    input[1:0] mode
+    input[1:0] mode,
+    output[11:0] res
 );
 wire [12:0] sum;
 wire [11:0] reduce_sum;
