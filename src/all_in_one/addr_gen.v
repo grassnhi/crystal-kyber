@@ -52,7 +52,7 @@ assign coef_addr = coef_addr_reg[6:0];
 reg [4:0] left_bits_raddr;
 reg [4:0] right_bits_raddr;
 wire [5:0] r_addr_wire;
-reg [4:0] w_addr_regs[0:7];
+reg [4:0] w_addr_regs[0:5];
 reg [2:0] shift_bit;
 always@(*) begin
     if (mode == `NTT) shift_bit = 3'd4 - clk_counter[7:5];
@@ -77,8 +77,6 @@ always@(posedge clk or posedge rst)begin
         w_addr_regs[3] <= 0;
         w_addr_regs[4] <= 0;
         w_addr_regs[5] <= 0;
-        w_addr_regs[6] <= 0;
-        w_addr_regs[7] <= 0;
     end
     begin
         w_addr_regs[0] <= r_addr_wire[4:0];
@@ -87,13 +85,11 @@ always@(posedge clk or posedge rst)begin
         w_addr_regs[3] <= w_addr_regs[2];
         w_addr_regs[4] <= w_addr_regs[3];
         w_addr_regs[5] <= w_addr_regs[4];
-        w_addr_regs[6] <= w_addr_regs[5];
-        w_addr_regs[7] <= w_addr_regs[6];
     end
 end
 always@(*)begin
     case(mode)
-    `NTT, `INTT: w_addr = w_addr_regs[7];
+    `NTT, `INTT: w_addr = w_addr_regs[5];
     `MULT: w_addr = clk_counter[7:2] - 3;
     `ADDSUB: w_addr = clk_counter[7:1] - 2;
     endcase

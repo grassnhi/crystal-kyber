@@ -32,9 +32,9 @@ module top(
 wire ntt_start, ntt_is_add_or_sub;
 wire [1:0] ntt_mode;
 wire [7:0]  ntt_ram_r_start_offset_A, ntt_ram_r_start_offset_B, ntt_ram_w_start_offset;
-
-wire addsub_start, add_flag;
-wire [7:0]  addsub_ram_r_start_offset_A, addsub_ram_r_start_offset_B;
+wire add_flag;
+// wire addsub_start, add_flag;
+// wire [7:0]  addsub_ram_r_start_offset_A, addsub_ram_r_start_offset_B;
 
 wire G_active, G_rst;
 
@@ -50,8 +50,8 @@ wire coder_active, coder_load_input_Enc, coder_load_input_Dec;
 wire [3:0] coder_mode;
 
 wire CBD_in_sel, rho_sel;
-wire [1:0] ram_r_sel;
-wire [2:0] ram_w_sel;
+wire ram_r_sel;
+wire [1:0] ram_w_sel;
 
 //G
 wire [255:0] G_rho, G_sigma;
@@ -74,10 +74,10 @@ reg [255:0] CBD_input;
 wire ntt_wen;
 wire [7:0] ntt_raddr, ntt_waddr;
 wire [95:0] ntt_wdata;
-//addsub
-wire addsub_wen;
-wire [7:0] addsub_raddr, addsub_waddr;
-wire [95:0] addsub_wdata;
+// //addsub
+// wire addsub_wen;
+// wire [7:0] addsub_raddr, addsub_waddr;
+// wire [95:0] addsub_wdata;
 //coder
 wire [255:0] rho_from_pk;
 wire coder_wen;
@@ -104,10 +104,10 @@ controller control(
     .ntt_ram_r_start_offset_B(ntt_ram_r_start_offset_B),
     .ntt_ram_w_start_offset(ntt_ram_w_start_offset),
 
-    .addsub_start(addsub_start),
-    .add_flag(add_flag),
-    .addsub_r_start_offset_A(addsub_ram_r_start_offset_A),
-    .addsub_r_start_offset_B(addsub_ram_r_start_offset_B),
+    // .addsub_start(addsub_start),
+    // .add_flag(add_flag),
+    // .addsub_r_start_offset_A(addsub_ram_r_start_offset_A),
+    // .addsub_r_start_offset_B(addsub_ram_r_start_offset_B),
 
     .G_active(G_active),
     .G_rst(G_rst),
@@ -162,6 +162,7 @@ ntt_processor ntt(
     .rst(rst),
     .start(ntt_start),
     .mode(ntt_mode),
+    .add_or_sub(add_flag),
     .r_start_offset_A(ntt_ram_r_start_offset_A),
     .r_start_offset_B(ntt_ram_r_start_offset_B),
     .w_data_addr_offset(ntt_ram_w_start_offset),
@@ -172,19 +173,19 @@ ntt_processor ntt(
     .w_data_en(ntt_wen)
 );
 
-addsub add_sub(
-    .clk(clk),
-    .rst(rst),
-    .start(addsub_start),
-    .add_flag(add_flag),
-    .in_addr_offset_A(addsub_ram_r_start_offset_A),
-    .in_addr_offset_B(addsub_ram_r_start_offset_B),
-    .in_data(RAM_rdata),
-    .out_data(addsub_wdata),
-    .w_en(addsub_wen),
-    .in_addr(addsub_raddr),
-    .out_addr(addsub_waddr)
-);
+// addsub add_sub(
+//     .clk(clk),
+//     .rst(rst),
+//     .start(addsub_start),
+//     .add_flag(add_flag),
+//     .in_addr_offset_A(addsub_ram_r_start_offset_A),
+//     .in_addr_offset_B(addsub_ram_r_start_offset_B),
+//     .in_data(RAM_rdata),
+//     .out_data(addsub_wdata),
+//     .w_en(addsub_wen),
+//     .in_addr(addsub_raddr),
+//     .out_addr(addsub_waddr)
+// );
 
 coder code(
     .clk(clk),
@@ -250,10 +251,6 @@ always@(*)begin
         2'b1:begin
             raddr_temp = ntt_raddr;
         end
-        2'd2:begin
-            raddr_temp = addsub_raddr;
-        end
-        default: raddr_temp = coder_raddr;
     endcase
 
     case(ram_w_sel)
@@ -268,21 +265,11 @@ always@(*)begin
             wdata_temp = ntt_wdata;
         end
         3'd2:begin
-            wen_temp = addsub_wen;
-            waddr_temp = addsub_waddr;
-            wdata_temp = addsub_wdata;
-        end
-        3'd3:begin
             wen_temp = A_wen;
             waddr_temp = A_waddr;
             wdata_temp = A_wdata;        
         end
-        3'd4:begin
-            wen_temp = CBD_wen;
-            waddr_temp = CBD_waddr;
-            wdata_temp = CBD_wdata;        
-        end
-        default:begin
+        3'd3:begin
             wen_temp = CBD_wen;
             waddr_temp = CBD_waddr;
             wdata_temp = CBD_wdata;        

@@ -117,7 +117,7 @@ always @(*)begin
             if(start)begin
                 temp_stage = PROCESSING;
                 in_data_reg = r_data;
-                clk_counter = ntt_counter+1;
+                clk_counter = ntt_counter + 1;
             end
             else begin
                 temp_stage = START;
@@ -132,8 +132,8 @@ always @(*)begin
             clk_counter = ntt_counter + 1;
             case(mode)
             `NTT, `INVNTT: begin
-                temp_stage = ntt_counter == 8'd230 ? FINISH : PROCESSING;
-                w_data_en = ntt_counter > 8'd199;
+                temp_stage = ntt_counter == 8'd228 ? FINISH : PROCESSING;
+                w_data_en = ntt_counter > 8'd197;
                 w_addr_reg = w_data_addr_offset + w_addr;
                 if(ntt_counter[7:5] == 3'b0)begin
                     in_data_reg = r_data;
@@ -156,10 +156,10 @@ always @(*)begin
                 end
             end
             `ADDSUB:begin
-                temp_stage = ntt_counter == 8'd68 ? FINISH : PROCESSING;
-                w_data_en = ntt_counter > 8'd37;
+                temp_stage = ntt_counter == 8'd66 ? FINISH : PROCESSING;
+                w_data_en = ntt_counter > 8'd35;
                 in_data_reg = r_data;
-                w_addr_reg = w_data_addr_offset + (ntt_counter - 8'd38);
+                w_addr_reg = w_data_addr_offset + (ntt_counter - 8'd36);
                 if (ntt_counter[0] == 0)begin
                     r_addr_reg = r_start_offset_A + ntt_counter[7:1];
                 end
