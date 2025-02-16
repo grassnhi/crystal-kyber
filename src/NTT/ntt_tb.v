@@ -36,7 +36,7 @@ initial begin
     #0
     rst = 1;
     start = 0;
-    mode = 0; // 0:NTT, 1:INVNTT, 2:MULT, 3:ADDSUB
+    mode = 1; // 0:NTT, 1:INVNTT, 2:MULT, 3:ADDSUB
     ram_r_start_offset_A = 0;
     ram_w_start_offset = 0;
     ram_rdata = 0;

@@ -30,8 +30,8 @@ wire [11:0] mult_in_2;
 wire [11:0] mult_coef_in;
 wire [11:0] mult_out_1;
 wire [11:0] mult_out_2;
-reg [11:0] mult_in_1_reg [0:3]; // use for timing output (delay 4 circles)
-
+reg [11:0] mult_in_1_reg [0:5]; // use for timing output (delay 4 circles)
+integer i;
 mult multiply (
     .clk(clk),
     .rst(rst),
@@ -41,20 +41,19 @@ mult multiply (
 );
 always @(posedge clk or posedge rst) begin
     if (rst)begin
-        mult_in_1_reg[0] <= 0;
-        mult_in_1_reg[1] <= 0;
-        mult_in_1_reg[2] <= 0;
-        mult_in_1_reg[3] <= 0;
+        for(i = 0; i < 6; i++)begin
+            mult_in_1_reg[i] <= 0;
+        end
     end
     else begin
         mult_in_1_reg[0] <= mult_in_1;
-        mult_in_1_reg[1] <= mult_in_1_reg[0];
-        mult_in_1_reg[2] <= mult_in_1_reg[1];
-        mult_in_1_reg[3] <= mult_in_1_reg[2];
+        for(i = 1; i < 6; i++)begin
+            mult_in_1_reg[i] <= mult_in_1_reg[i-1];
+        end
     end
 
 end
-assign mult_out_1 = mult_in_1_reg[3];
+assign mult_out_1 = mult_in_1_reg[5];
 
 // add & sub
 wire [11:0] addsub_in_1;

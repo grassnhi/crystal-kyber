@@ -43,10 +43,11 @@ initial begin
     ram_r_start_offset_B = 32;
     ram_w_start_offset = 64;
     ram_rdata = 0;
+    add_or_sub = 0;
     #2
     rst = 0;
     start = 1;
-    add_or_sub = 1;
+    add_or_sub = 0;
     mode = 3;
     ram_rdata = {12'd193, 12'd192, 12'd65, 12'd64, 12'd129, 12'd128, 12'd1, 12'd0};
     #2 ram_rdata = {12'd225, 12'd224, 12'd97, 12'd96, 12'd161, 12'd160, 12'd33, 12'd32};

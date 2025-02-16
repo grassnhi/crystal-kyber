@@ -21,7 +21,7 @@ initial begin
     $dumpvars(0, ADDR);
     #0
     rst = 1;
-    mode = 1; // 0:NTT, 1:INVNTT, 2:MULT
+    mode = 0; // 0:NTT, 1:INVNTT, 2:MULT
     #1
     rst = 0;
     #456 

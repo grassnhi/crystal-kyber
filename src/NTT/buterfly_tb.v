@@ -41,6 +41,10 @@ initial begin
     in_2 = 12'd3328;
     coef = 12'd2;
     #30
+    rst = 1;
+    mode = 1; // 0:NTT, 1:INVNTT, 2:MULT, 3:ADDSUB
+    #2
+    rst = 0;
     mode = 1;
     in_2 = 12'd728;
     in_1 = 12'd2847;
@@ -54,6 +58,10 @@ initial begin
     in_1 = 12'd52;
     coef = 12'd3327;
     #30
+    rst = 1;
+    mode = 2; // 0:NTT, 1:INVNTT, 2:MULT, 3:ADDSUB
+    #2
+    rst = 0;
     mode = 2;
     in_2 = 12'd728;
     in_1 = 12'd2847;
@@ -66,7 +74,25 @@ initial begin
     in_2 = 12'd48;
     in_1 = 12'd52;
     coef = 12'd3327;
-    #20 $finish;
+    #20 
+    rst = 1;
+    mode = 3; // 0:NTT, 1:INVNTT, 2:MULT, 3:ADDSUB
+    #2
+    rst = 0;
+    mode = 3;
+    in_2 = 12'd728;
+    in_1 = 12'd2847;
+    coef = 12'd3279;
+    #2
+    in_2 = 12'd605;
+    in_1 = 12'd2724;
+    coef = 12'd3279;
+    #2
+    in_2 = 12'd48;
+    in_1 = 12'd52;
+    coef = 12'd3327;
+    #20
+    $finish;
 end
 initial begin
     clk = 1;

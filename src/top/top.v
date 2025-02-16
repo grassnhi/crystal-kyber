@@ -173,20 +173,6 @@ ntt_processor ntt(
     .w_data_en(ntt_wen)
 );
 
-// addsub add_sub(
-//     .clk(clk),
-//     .rst(rst),
-//     .start(addsub_start),
-//     .add_flag(add_flag),
-//     .in_addr_offset_A(addsub_ram_r_start_offset_A),
-//     .in_addr_offset_B(addsub_ram_r_start_offset_B),
-//     .in_data(RAM_rdata),
-//     .out_data(addsub_wdata),
-//     .w_en(addsub_wen),
-//     .in_addr(addsub_raddr),
-//     .out_addr(addsub_waddr)
-// );
-
 coder code(
     .clk(clk),
     .rst(rst),

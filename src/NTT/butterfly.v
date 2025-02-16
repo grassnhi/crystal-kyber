@@ -49,8 +49,8 @@ reg [11:0] in_buf_a_pre [7:0]; // 12x8 input buffer, used in multiply operation
 reg [11:0] in_buf_a [7:0]; // 12x8 input buffer, used in multiply operation
 reg [11:0] in_buf_b [7:0]; // 12x8 input buffer, used in multiply operation
 reg [11:0] out_buf [7:0]; // 12x8 output buffer
-reg [2:0] stage_prop [8:0]; // stage propagation register
-reg type_prop [7:0]; // type propagation register
+reg [2:0] stage_prop [17:0]; // stage propagation register
+reg type_prop [11:0]; // type propagation register
 
 // bu_0
 reg [11:0] bu_0_in_1, bu_0_in_2, bu_0_coef;
@@ -278,17 +278,17 @@ end
 // stage_prop & type_prop
 always @(posedge clk or posedge rst) begin
     if(rst) begin
-        for(i=0; i<6; i=i+1) stage_prop[0] <= 0;
-        for(i=0; i<9; i=i+1) type_prop[0] <= 0;
+        for(i=0; i<17; i=i+1) stage_prop[0] <= 0;
+        for(i=0; i<14; i=i+1) type_prop[0] <= 0;
     end
     else begin
         stage_prop[0] <= stage;
         type_prop[0] <= type;
-        for(i=1; i<8; i=i+1) begin
+        for(i=1; i<12; i=i+1) begin
             stage_prop[i] <= stage_prop[i-1];
             type_prop[i] <= type_prop[i-1];
         end
-        for(i=8; i<9; i=i+1) begin
+        for(i=12; i<17; i=i+1) begin
             stage_prop[i] <= stage_prop[i-1];
         end
     end
@@ -302,7 +302,7 @@ always @(posedge clk) begin
     else begin
         case(mode)
         `NTT: begin
-            if(stage_prop[6] == 3'd5) begin
+            if(stage_prop[8] == 3'd5) begin
                 out_buf[0] <= bu_0_out_1;
                 out_buf[1] <= bu_1_out_1;
                 out_buf[2] <= bu_2_out_1;
@@ -312,7 +312,7 @@ always @(posedge clk) begin
                 out_buf[6] <= bu_2_out_2;
                 out_buf[7] <= bu_3_out_2;
             end
-            else if(stage_prop[6] == 3'd6) begin
+            else if(stage_prop[8] == 3'd6) begin
                 out_buf[0] <= bu_0_out_1;
                 out_buf[1] <= bu_1_out_1;
                 out_buf[2] <= bu_0_out_2;
@@ -323,7 +323,7 @@ always @(posedge clk) begin
                 out_buf[7] <= bu_3_out_2;
             end
             else begin 
-                if(type_prop[4] == 1'b0) begin 
+                if(type_prop[8] == 1'b0) begin 
                     out_buf[0] <= bu_0_out_2;
                     out_buf[1] <= bu_1_out_2;
                     out_buf[2] <= bu_2_out_2;
@@ -342,7 +342,7 @@ always @(posedge clk) begin
             end
         end
         `INVNTT: begin
-            if(stage_prop[4] == 3'd0 || stage_prop[4] == 3'd6) begin
+            if(stage_prop[8] == 3'd0 || stage_prop[8] == 3'd6) begin
                 out_buf[0] <= bu_0_out_1;
                 out_buf[1] <= bu_1_out_1;
                 out_buf[2] <= bu_0_out_2;
@@ -353,7 +353,7 @@ always @(posedge clk) begin
                 out_buf[7] <= bu_3_out_2;
             end
             else begin 
-                if(type_prop[6] == 1'b0) begin 
+                if(type_prop[8] == 1'b0) begin 
                     out_buf[0] <= bu_2_out_1;
                     out_buf[1] <= bu_3_out_1;
                     out_buf[2] <= bu_2_out_2;
@@ -372,7 +372,7 @@ always @(posedge clk) begin
             end
         end
         `MULT: begin
-            case(stage_prop[8][1:0]) 
+            case(stage_prop[14][1:0]) 
             2'd2: begin
                 out_buf[0] <= bu_2_out_1;
                 out_buf[1] <= bu_3_out_1;
@@ -429,11 +429,11 @@ end
 always @(*) begin
     case(mode)
     `NTT: begin
-        if(stage_prop[7] == 3'd5 || stage_prop[7] == 3'd6) begin
+        if(stage_prop[9] == 3'd5 || stage_prop[9] == 3'd6) begin
             for(i=0; i<8; i=i+1) out_data_split[i] = out_buf[i];
         end
         else begin 
-            if(type_prop[7] == 1'b0) begin 
+            if(type_prop[9] == 1'b0) begin 
                 out_data_split[0] = out_buf[4];
                 out_data_split[1] = out_buf[5];
                 out_data_split[2] = out_buf[6];
@@ -449,11 +449,11 @@ always @(*) begin
         end
     end
     `INVNTT: begin
-        if(stage_prop[7] == 3'd0 || stage_prop[7] == 3'd6) begin
+        if(stage_prop[9] == 3'd0 || stage_prop[9] == 3'd6) begin
             for(i=0; i<8; i=i+1) out_data_split[i] = out_buf[i];
         end
         else begin 
-            if(type_prop[7] == 1'b0) begin 
+            if(type_prop[9] == 1'b0) begin 
                 out_data_split[0] = out_buf[4];
                 out_data_split[1] = out_buf[5];
                 out_data_split[2] = out_buf[6];
