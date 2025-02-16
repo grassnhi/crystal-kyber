@@ -302,7 +302,7 @@ always @(posedge clk) begin
     else begin
         case(mode)
         `NTT: begin
-            if(stage_prop[8] == 3'd5) begin
+            if(stage_prop[4] == 3'd5) begin
                 out_buf[0] <= bu_0_out_1;
                 out_buf[1] <= bu_1_out_1;
                 out_buf[2] <= bu_2_out_1;
@@ -312,7 +312,7 @@ always @(posedge clk) begin
                 out_buf[6] <= bu_2_out_2;
                 out_buf[7] <= bu_3_out_2;
             end
-            else if(stage_prop[8] == 3'd6) begin
+            else if(stage_prop[4] == 3'd6) begin
                 out_buf[0] <= bu_0_out_1;
                 out_buf[1] <= bu_1_out_1;
                 out_buf[2] <= bu_0_out_2;
@@ -323,7 +323,7 @@ always @(posedge clk) begin
                 out_buf[7] <= bu_3_out_2;
             end
             else begin 
-                if(type_prop[8] == 1'b0) begin 
+                if(type_prop[4] == 1'b0) begin 
                     out_buf[0] <= bu_0_out_2;
                     out_buf[1] <= bu_1_out_2;
                     out_buf[2] <= bu_2_out_2;
@@ -342,7 +342,7 @@ always @(posedge clk) begin
             end
         end
         `INVNTT: begin
-            if(stage_prop[8] == 3'd0 || stage_prop[8] == 3'd6) begin
+            if(stage_prop[4] == 3'd0 || stage_prop[4] == 3'd6) begin
                 out_buf[0] <= bu_0_out_1;
                 out_buf[1] <= bu_1_out_1;
                 out_buf[2] <= bu_0_out_2;
@@ -353,7 +353,7 @@ always @(posedge clk) begin
                 out_buf[7] <= bu_3_out_2;
             end
             else begin 
-                if(type_prop[8] == 1'b0) begin 
+                if(type_prop[4] == 1'b0) begin 
                     out_buf[0] <= bu_2_out_1;
                     out_buf[1] <= bu_3_out_1;
                     out_buf[2] <= bu_2_out_2;
@@ -372,7 +372,7 @@ always @(posedge clk) begin
             end
         end
         `MULT: begin
-            case(stage_prop[14][1:0]) 
+            case(stage_prop[8][1:0]) 
             2'd2: begin
                 out_buf[0] <= bu_2_out_1;
                 out_buf[1] <= bu_3_out_1;
@@ -392,8 +392,8 @@ always @(posedge clk) begin
             endcase
         end
         default: begin
-             if(type_prop[2]) begin // sub
-                if(stage_prop[2] == 3'd1) begin
+             if(type_prop[0]) begin // sub
+                if(stage_prop[0] == 3'd1) begin
                     out_buf[4] <= bu_0_out_2;
                     out_buf[5] <= bu_1_out_2;
                     out_buf[6] <= bu_2_out_2;
@@ -407,7 +407,7 @@ always @(posedge clk) begin
                 end 
             end
             else begin // add
-                if(stage_prop[2] == 3'd1) begin
+                if(stage_prop[0] == 3'd1) begin
                     out_buf[4] <= bu_0_out_1;
                     out_buf[5] <= bu_1_out_1;
                     out_buf[6] <= bu_2_out_1;
@@ -429,11 +429,11 @@ end
 always @(*) begin
     case(mode)
     `NTT: begin
-        if(stage_prop[9] == 3'd5 || stage_prop[9] == 3'd6) begin
+        if(stage_prop[5] == 3'd5 || stage_prop[5] == 3'd6) begin
             for(i=0; i<8; i=i+1) out_data_split[i] = out_buf[i];
         end
         else begin 
-            if(type_prop[9] == 1'b0) begin 
+            if(type_prop[5] == 1'b0) begin 
                 out_data_split[0] = out_buf[4];
                 out_data_split[1] = out_buf[5];
                 out_data_split[2] = out_buf[6];
@@ -449,11 +449,11 @@ always @(*) begin
         end
     end
     `INVNTT: begin
-        if(stage_prop[9] == 3'd0 || stage_prop[9] == 3'd6) begin
+        if(stage_prop[5] == 3'd0 || stage_prop[5] == 3'd6) begin
             for(i=0; i<8; i=i+1) out_data_split[i] = out_buf[i];
         end
         else begin 
-            if(type_prop[9] == 1'b0) begin 
+            if(type_prop[5] == 1'b0) begin 
                 out_data_split[0] = out_buf[4];
                 out_data_split[1] = out_buf[5];
                 out_data_split[2] = out_buf[6];

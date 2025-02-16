@@ -30,7 +30,7 @@ wire [11:0] mult_in_2;
 wire [11:0] mult_coef_in;
 wire [11:0] mult_out_1;
 wire [11:0] mult_out_2;
-reg [11:0] mult_in_1_reg [0:5]; // use for timing output (delay 4 circles)
+reg [11:0] mult_in_1_reg [0:3]; // use for timing output (delay 4 circles)
 integer i;
 mult multiply (
     .clk(clk),
@@ -41,19 +41,19 @@ mult multiply (
 );
 always @(posedge clk or posedge rst) begin
     if (rst)begin
-        for(i = 0; i < 6; i++)begin
+        for(i = 0; i < 4; i++)begin
             mult_in_1_reg[i] <= 0;
         end
     end
     else begin
         mult_in_1_reg[0] <= mult_in_1;
-        for(i = 1; i < 6; i++)begin
+        for(i = 1; i < 4; i++)begin
             mult_in_1_reg[i] <= mult_in_1_reg[i-1];
         end
     end
 
 end
-assign mult_out_1 = mult_in_1_reg[5];
+assign mult_out_1 = mult_in_1_reg[3];
 
 // add & sub
 wire [11:0] addsub_in_1;
@@ -63,16 +63,12 @@ wire [11:0] addsub_out_2;
 reg [11:0]  addsub_in_1_reg;
 reg [11:0]  addsub_in_2_reg;
 add addition (
-    .clk(clk),
-    .rst(rst),
     .mode(mode),
     .in1(addsub_in_1_reg),
     .in2(addsub_in_2_reg),
     .res(addsub_out_1)
 );
 sub subtraction (
-    .clk(clk),
-    .rst(rst),
     .mode(mode),
     .in1(addsub_in_1_reg),
     .in2(addsub_in_2_reg),
@@ -91,22 +87,14 @@ always @(posedge clk or posedge rst) begin
 end
 
 // input select multiplexers
-reg [11:0] mult_coef_in_reg[0:2];
+reg [11:0] mult_coef_in_reg;
 always @(posedge clk or posedge rst) begin
-    if(rst)begin
-        mult_coef_in_reg[0] <= 0;
-        mult_coef_in_reg[1] <= 0;
-        mult_coef_in_reg[2] <= 0;
-    end
-    else begin
-        mult_coef_in_reg[0] <= coef;
-        mult_coef_in_reg[1] <= mult_coef_in_reg[0];
-        mult_coef_in_reg[2] <= mult_coef_in_reg[1];
-    end
+    if(rst) mult_coef_in_reg <= 0;
+    else mult_coef_in_reg <= coef;
 end
 assign mult_in_1 = mode == `INTT || mode == `ADDSUB? addsub_out_1 : in_1;
 assign mult_in_2 = mode == `INTT || mode == `ADDSUB? addsub_out_2 : in_2;
-assign mult_coef_in = mode == `INTT || mode == `ADDSUB? mult_coef_in_reg[2] : coef;
+assign mult_coef_in = mode == `INTT || mode == `ADDSUB? mult_coef_in_reg : coef;
 assign addsub_in_1 = mode == `INTT || mode == `ADDSUB? in_1 : mult_out_1;
 assign addsub_in_2 = mode == `INTT || mode == `ADDSUB? in_2 : mult_out_2;
 
