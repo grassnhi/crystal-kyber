@@ -11,7 +11,6 @@ module controller (
     output reg [7:0] ntt_ram_r_start_offset_A,
     output reg [7:0] ntt_ram_r_start_offset_B,
     output reg [7:0] ntt_ram_w_start_offset,
-    output reg add_flag,
 
     output G_active,
     output G_rst,
@@ -34,8 +33,8 @@ module controller (
 
     output CBD_in_sel, // 0:from G, 1:from random coin
     output rho_sel, // 0:from G, 1:from pk
-    output reg [1:0] ram_r_sel, // 0:from coder, 1:from ntt, 2:from addsub
-    output reg [3:0] ram_w_sel // 0:from coder, 1:from ntt, 2:from A_gen, 3:from CBD
+    output reg ram_r_sel, // 0:from coder, 1:from ntt
+    output reg [1:0] ram_w_sel // 0:from coder, 1:from ntt, 2:from A_gen, 3:from CBD
 );
 
 reg [1:0] state_reg;
@@ -43,7 +42,6 @@ reg [11:0] cycle_cnt, ncnt;
 reg [1:0] A_gen_state;
 reg [2:0] CBD_state;
 reg [4:0] ntt_state;
-reg [4:0] addsub_state;
 reg [1:0] coder_state;
 
 // mode define
@@ -141,10 +139,10 @@ parameter coder_mode_Dec_decode_c = 4'd7;
 parameter coder_mode_Dec_encode_m = 4'd8;
 
 // ram_w_sel define
-parameter ram_w_from_coder = 3'd0;
-parameter ram_w_from_ntt = 3'd1;
-parameter ram_w_from_A_gen = 3'd2;
-parameter ram_w_from_CBD = 3'd3;
+parameter ram_w_from_coder = 2'd0;
+parameter ram_w_from_ntt = 2'd1;
+parameter ram_w_from_A_gen = 2'd2;
+parameter ram_w_from_CBD = 2'd3;
 
 // cycle_cnt logic
 always @(posedge clk or posedge rst) begin
@@ -237,7 +235,6 @@ always @(posedge clk or posedge rst) begin
         endcase
     end
 end
-
 always @(*) begin
     case(state_reg)
     KeyGen: begin
@@ -273,6 +270,18 @@ always @(*) begin
             ntt_ram_r_start_offset_B = ram_6_offset;
             ntt_ram_w_start_offset = ram_6_offset;
         end
+        NTT_st_ADD_t0: begin
+            ntt_mode = 2'd3;
+            ntt_ram_r_start_offset_A = ram_0_offset;
+            ntt_ram_r_start_offset_B = ram_1_offset;
+            ntt_ram_w_start_offset = ram_0_offset;
+        end
+        NTT_st_ADD_e0: begin
+            ntt_mode = 2'd3;
+            ntt_ram_r_start_offset_A = ram_0_offset;
+            ntt_ram_r_start_offset_B = ram_6_offset;
+            ntt_ram_w_start_offset = ram_6_offset;
+        end
         NTT_st_MUL_A10_s0: begin
             ntt_mode = 2'd2;
             ntt_ram_r_start_offset_A = ram_2_offset;
@@ -288,6 +297,18 @@ always @(*) begin
         NTT_st_NTT_e1: begin
             ntt_mode = 2'd0;
             ntt_ram_r_start_offset_A = ram_7_offset;
+            ntt_ram_r_start_offset_B = ram_7_offset;
+            ntt_ram_w_start_offset = ram_7_offset;
+        end
+        NTT_st_ADD_t1: begin
+            ntt_mode = 2'd3;
+            ntt_ram_r_start_offset_A = ram_2_offset;
+            ntt_ram_r_start_offset_B = ram_3_offset;
+            ntt_ram_w_start_offset = ram_2_offset;
+        end
+        NTT_st_ADD_e1: begin
+            ntt_mode = 2'd3;
+            ntt_ram_r_start_offset_A = ram_2_offset;
             ntt_ram_r_start_offset_B = ram_7_offset;
             ntt_ram_w_start_offset = ram_7_offset;
         end
@@ -326,11 +347,23 @@ always @(*) begin
             ntt_ram_r_start_offset_B = ram_5_offset;
             ntt_ram_w_start_offset = ram_2_offset;
         end
+        NTT_st_ADD_u0: begin
+            ntt_mode = 2'd3;
+            ntt_ram_r_start_offset_A = ram_0_offset;
+            ntt_ram_r_start_offset_B = ram_2_offset;
+            ntt_ram_w_start_offset = ram_0_offset;
+        end
         NTT_st_INVNTT_u0: begin
             ntt_mode = 2'd1;
             ntt_ram_r_start_offset_A = ram_0_offset;
             ntt_ram_r_start_offset_B = ram_0_offset;
             ntt_ram_w_start_offset = ram_0_offset;
+        end
+        NTT_st_ADD_e10: begin
+            ntt_mode = 2'd3;
+            ntt_ram_r_start_offset_A = ram_0_offset;
+            ntt_ram_r_start_offset_B = ram_6_offset;
+            ntt_ram_w_start_offset = ram_6_offset;
         end
         NTT_st_MUL_A01_r0: begin
             ntt_mode = 2'd2;
@@ -344,11 +377,23 @@ always @(*) begin
             ntt_ram_r_start_offset_B = ram_5_offset;
             ntt_ram_w_start_offset = ram_3_offset;
         end
+        NTT_st_ADD_u1: begin
+            ntt_mode = 2'd3;
+            ntt_ram_r_start_offset_A = ram_1_offset;
+            ntt_ram_r_start_offset_B = ram_3_offset;
+            ntt_ram_w_start_offset = ram_3_offset;
+        end
         NTT_st_INVNTT_u1: begin
             ntt_mode = 2'd1;
             ntt_ram_r_start_offset_A = ram_3_offset;
             ntt_ram_r_start_offset_B = ram_3_offset;
             ntt_ram_w_start_offset = ram_3_offset;
+        end
+        NTT_st_ADD_e11: begin
+            ntt_mode = 2'd3;
+            ntt_ram_r_start_offset_A = ram_3_offset;
+            ntt_ram_r_start_offset_B = ram_7_offset;
+            ntt_ram_w_start_offset = ram_7_offset;
         end
         NTT_st_MUL_t0_r0: begin
             ntt_mode = 2'd2;
@@ -362,10 +407,28 @@ always @(*) begin
             ntt_ram_r_start_offset_B = ram_5_offset;
             ntt_ram_w_start_offset = ram_1_offset;
         end
+        NTT_st_ADD_v: begin
+            ntt_mode = 2'd3;
+            ntt_ram_r_start_offset_A = ram_0_offset;
+            ntt_ram_r_start_offset_B = ram_1_offset;
+            ntt_ram_w_start_offset = ram_0_offset;
+        end
         NTT_st_INVNTT_v: begin
             ntt_mode = 2'd1;
             ntt_ram_r_start_offset_A = ram_0_offset;
             ntt_ram_r_start_offset_B = ram_0_offset;
+            ntt_ram_w_start_offset = ram_0_offset;
+        end
+        NTT_st_ADD_e2: begin
+            ntt_mode = 2'd3;
+            ntt_ram_r_start_offset_A = ram_0_offset;
+            ntt_ram_r_start_offset_B = ram_2_offset;
+            ntt_ram_w_start_offset = ram_0_offset;
+        end
+        NTT_st_ADD_m: begin
+            ntt_mode = 2'd3;
+            ntt_ram_r_start_offset_A = ram_0_offset;
+            ntt_ram_r_start_offset_B = ram_3_offset;
             ntt_ram_w_start_offset = ram_0_offset;
         end
         default: begin
@@ -403,9 +466,22 @@ always @(*) begin
             ntt_ram_r_start_offset_B = ram_4_offset;
             ntt_ram_w_start_offset = ram_1_offset;
         end
+        NTT_st_ADD_su: begin
+            ntt_mode = 2'd3;
+            ntt_ram_r_start_offset_A = ram_0_offset;
+            ntt_ram_r_start_offset_B = ram_1_offset;
+            ntt_ram_w_start_offset = ram_0_offset;
+        end
         NTT_st_INVNTT_su: begin
             ntt_mode = 2'd1;
             ntt_ram_r_start_offset_A = ram_0_offset;
+            ntt_ram_r_start_offset_B = ram_0_offset;
+            ntt_ram_w_start_offset = ram_0_offset;
+        end
+        NTT_st_SUB_v_su: begin
+            ntt_is_add_or_sub = 1'b1;
+            ntt_mode = 2'd3;
+            ntt_ram_r_start_offset_A = ram_2_offset;
             ntt_ram_r_start_offset_B = ram_0_offset;
             ntt_ram_w_start_offset = ram_0_offset;
         end
@@ -426,107 +502,7 @@ always @(*) begin
     end
     endcase
 end
-always @(*) begin
-    case(state_reg)
-    KeyGen: begin
-        case(addsub_state)
-        ADDSUB_st_ADD_t0: begin
-            add_flag = 1;
-            addsub_r_start_offset_A = ram_0_offset;
-            addsub_r_start_offset_B = ram_1_offset;
-        end
-        ADDSUB_st_ADD_e0: begin
-            add_flag = 1;
-            addsub_r_start_offset_A = ram_6_offset;
-            addsub_r_start_offset_B = ram_0_offset;
-        end
-        ADDSUB_st_ADD_t1: begin
-            add_flag = 1;
-            addsub_r_start_offset_A = ram_2_offset;
-            addsub_r_start_offset_B = ram_3_offset;
-        end
-        ADDSUB_st_ADD_e1: begin
-            add_flag = 1;
-            addsub_r_start_offset_A = ram_7_offset;
-            addsub_r_start_offset_B = ram_2_offset;
-        end
-        default: begin
-            add_flag = 0;
-            addsub_r_start_offset_A = ram_0_offset;
-            addsub_r_start_offset_B = ram_0_offset;
-        end
-        endcase
-    end
-    Enc: begin
-        case(addsub_state)
-        ADDSUB_st_ADD_u0: begin
-            add_flag = 1;
-            addsub_r_start_offset_A = ram_0_offset;
-            addsub_r_start_offset_B = ram_2_offset;
-        end
-        ADDSUB_st_ADD_e10: begin
-            add_flag = 1;
-            addsub_r_start_offset_A = ram_6_offset;
-            addsub_r_start_offset_B = ram_0_offset;
-        end
-        ADDSUB_st_ADD_u1: begin
-            add_flag = 1;
-            addsub_r_start_offset_A = ram_3_offset;
-            addsub_r_start_offset_B = ram_1_offset;
-        end
-        ADDSUB_st_ADD_e11: begin
-            add_flag = 1;
-            addsub_r_start_offset_A = ram_7_offset;
-            addsub_r_start_offset_B = ram_3_offset;
-        end
-        ADDSUB_st_ADD_v: begin
-            add_flag = 1;
-            addsub_r_start_offset_A = ram_0_offset;
-            addsub_r_start_offset_B = ram_1_offset;
-        end
-        ADDSUB_st_ADD_e2: begin
-            add_flag = 1;
-            addsub_r_start_offset_A = ram_0_offset;
-            addsub_r_start_offset_B = ram_2_offset;
-        end
-        ADDSUB_st_ADD_m: begin
-            add_flag = 1;
-            addsub_r_start_offset_A = ram_0_offset;
-            addsub_r_start_offset_B = ram_3_offset;
-        end
-        default: begin
-            add_flag = 0;
-            addsub_r_start_offset_A = ram_0_offset;
-            addsub_r_start_offset_B = ram_0_offset;
-        end
-        endcase
-    end
-    Dec: begin
-        case(addsub_state)
-        ADDSUB_st_ADD_su: begin
-            add_flag = 1;
-            addsub_r_start_offset_A = ram_0_offset;
-            addsub_r_start_offset_B = ram_1_offset;
-        end
-        ADDSUB_st_SUB_v_su: begin
-            add_flag = 0;
-            addsub_r_start_offset_A = ram_0_offset;
-            addsub_r_start_offset_B = ram_2_offset;
-        end
-        default: begin
-            add_flag = 0;
-            addsub_r_start_offset_A = ram_0_offset;
-            addsub_r_start_offset_B = ram_0_offset;
-        end
-        endcase
-    end
-    default: begin
-		add_flag = 0;
-        addsub_r_start_offset_A = ram_0_offset;
-        addsub_r_start_offset_B = ram_0_offset;
-    end
-    endcase
-end
+
 // G logic
 assign G_active = state_reg == KeyGen && cycle_cnt == 12'd0;
 assign G_rst = rst || state_reg == FINISH;
@@ -848,7 +824,6 @@ always @(*) begin
     default: ram_w_sel = 1'b0;
     endcase
 end
-
 
 assign finish = state_reg == FINISH;
    

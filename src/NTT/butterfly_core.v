@@ -41,13 +41,13 @@ mult multiply (
 );
 always @(posedge clk or posedge rst) begin
     if (rst)begin
-        for(i = 0; i < 4; i++)begin
+        for(i = 0; i < 4; i = i+1)begin
             mult_in_1_reg[i] <= 0;
         end
     end
     else begin
         mult_in_1_reg[0] <= mult_in_1;
-        for(i = 1; i < 4; i++)begin
+        for(i = 1; i < 4; i = i+1)begin
             mult_in_1_reg[i] <= mult_in_1_reg[i-1];
         end
     end

@@ -25,22 +25,24 @@ reg [6143:0]c_tmp; // 10*256*2 + 4*256
 wire finish;
 
 top kyber(
-    clk,
-    rst,
-    start,
-    mode,
-    random_coin,
-    m_in,
-    pk_in,// 12*256*2 + 256
-    sk_in,// 12*256*2
-    c_in, // 10*256*2 + 4*256
-    m_out,
-    pk_out,// 12*256*2 + 256
-    sk_out,// 12*256*2
-    c_out, // 10*256*2 + 4*256
-    finish
-);
+    .clk(clk),
+    .rst(rst),
+    .start(start),
+    .mode(mode),
+    .random_coin(random_coin),
 
+    .m_in(m_in),
+    .pk_in(pk_in),// 12*256*2 + 256
+    .sk_in(sk_in),// 12*256*2
+    .c_in(c_in), // 10*256*2 + 4*256
+
+    .m_out(m_out),
+    .pk_out(pk_out),// 12*256*2 + 256
+    .sk_out(sk_out),// 12*256*2
+    .c_out(c_out), // 10*256*2 + 4*256
+
+    .finish(finish)
+);
 always #5 clk = ~clk;
 
 initial begin

@@ -32,7 +32,6 @@ module top(
 wire ntt_start, ntt_is_add_or_sub;
 wire [1:0] ntt_mode;
 wire [7:0]  ntt_ram_r_start_offset_A, ntt_ram_r_start_offset_B, ntt_ram_w_start_offset;
-wire add_flag;
 // wire addsub_start, add_flag;
 // wire [7:0]  addsub_ram_r_start_offset_A, addsub_ram_r_start_offset_B;
 
@@ -104,11 +103,6 @@ controller control(
     .ntt_ram_r_start_offset_B(ntt_ram_r_start_offset_B),
     .ntt_ram_w_start_offset(ntt_ram_w_start_offset),
 
-    // .addsub_start(addsub_start),
-    // .add_flag(add_flag),
-    // .addsub_r_start_offset_A(addsub_ram_r_start_offset_A),
-    // .addsub_r_start_offset_B(addsub_ram_r_start_offset_B),
-
     .G_active(G_active),
     .G_rst(G_rst),
 
@@ -162,7 +156,7 @@ ntt_processor ntt(
     .rst(rst),
     .start(ntt_start),
     .mode(ntt_mode),
-    .add_or_sub(add_flag),
+    .add_or_sub(ntt_is_add_or_sub),
     .r_start_offset_A(ntt_ram_r_start_offset_A),
     .r_start_offset_B(ntt_ram_r_start_offset_B),
     .w_data_addr_offset(ntt_ram_w_start_offset),
