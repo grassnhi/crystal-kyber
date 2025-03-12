@@ -179,7 +179,7 @@ always @(*) begin
     endcase
 end
 always @(posedge clk or posedge rst) begin
-    if(rst) CBD_state <= 5'd0;
+    if(rst) ntt_state <= 5'd0;
     else begin
         case(state_reg)
         KeyGen: begin
