@@ -99,7 +99,7 @@ always @(*) begin
     end
     `MULT: begin
         ntt_stage = {1'b0, ntt_counter[1:0]};
-        in_buf_pre_load = ntt_counter[1:0] == 2'b0;
+        in_buf_pre_load = ntt_counter[1:0] == 2'b0 && stage == PROCESSING;
         in_buf_load = ntt_counter[1:0] == 2'b1;
         ntt_type = mode == ntt_counter[0];
     end
@@ -117,7 +117,7 @@ always @(*)begin
             if(start)begin
                 temp_stage = PROCESSING;
                 in_data_reg = r_data;
-                clk_counter = ntt_counter+1;
+                clk_counter = ntt_counter;
             end
             else begin
                 temp_stage = START;

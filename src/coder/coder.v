@@ -1,5 +1,4 @@
-`include "../coder/compress.v"
-`include "../coder/decompress.v"
+`timescale 1ns / 1ps
 
 module coder (
     input clk,
@@ -41,12 +40,12 @@ parameter ram_7_offset = 8'd224;
 
 // mode define
 parameter WAIT = 4'd0;
-parameter KeyGen_encode_sk = 4'd1; // 65 cycle (active 1 + working 64)
-parameter KeyGen_encode_pk = 4'd2; // 65 cycle (active 1 + working 64)
-parameter Enc_decode_pk = 4'd3; // 65 cycle (active 1 + working 64)
+parameter KeyGen_encode_sk = 4'd1; // 67 cycle (active 1 + working 66)
+parameter KeyGen_encode_pk = 4'd2; // 67 cycle (active 1 + working 66)
+parameter Enc_decode_pk = 4'd3; // 64 cycle (active 1 + working 63)
 parameter Enc_decode_m = 4'd4; // 34 cycle (active 1 + working 33)
-parameter Enc_encode_c = 4'd5; // 98 cycle (active 1 + working 97)
-parameter Dec_decode_sk = 4'd6; // 65 cycle (active 1 + working 64)
+parameter Enc_encode_c = 4'd5; // 100 cycle (active 1 + working 99)
+parameter Dec_decode_sk = 4'd6; // 64 cycle (active 1 + working 63)
 parameter Dec_decode_c = 4'd7; // 98 cycle (active 1 + working 97)
 parameter Dec_encode_m = 4'd8; // 34 cycle (active 1 + working 33)
 
@@ -144,6 +143,8 @@ generate
     end
 endgenerate
 
+// According to the spec, compress + decompress => c and m 
+// pk and sk => encode and decode only => spilit to store to RAM/ load from RAM and concat
 integer i2;
 always @(posedge clk or posedge rst) begin
     if(rst) begin
@@ -183,93 +184,102 @@ always @(posedge clk or posedge rst) begin
     end
 end
 
-always @(*) begin
-    ram_wen = 1'b0;
-    ram_raddr = 7'd0;
-    ram_waddr = 7'd0;
-    ram_wdata = 8'd0;
-    d = 4'd1;
-    decomp_in_d1 = 8'd0;
-    decomp_in_d4 = 32'd0;
-    decomp_in_d10 = 80'd0;
-    last_cycle = 1'b0;
-    for(i2=0; i2<64; i2=i2+1) begin
-        t_c_reg_t_in[i2] = t_c_reg_t[i2];
-        t_c_reg_u_in[i2] = t_c_reg_u[i2];
-        s_m_reg_s_in[i2] = s_m_reg_s[i2];
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        ram_wen <= 1'b0;
+        ram_raddr <= 7'd0;
+        ram_waddr <= 7'd0;
+        ram_wdata <= 8'd0;
+        d <= 4'd1;
+        decomp_in_d1 <= 8'd0;
+        decomp_in_d4 <= 32'd0;
+        decomp_in_d10 <= 80'd0;
+        last_cycle <= 1'b0;
+        
+        for (i2 = 0; i2 < 64; i2 = i2 + 1) begin
+            t_c_reg_t_in[i2] <= 0;
+            t_c_reg_u_in[i2] <= 0;
+            s_m_reg_s_in[i2] <= 0;
+        end
+        for (i2 = 0; i2 < 32; i2 = i2 + 1) begin
+            t_c_reg_v_in[i2] <= 0;
+            s_m_reg_m_in[i2] <= 0;
+        end
+    end 
+    else begin
+        ram_wen <= 1'b0;
+        last_cycle <= 1'b0;
+        
+        case (mode_reg)
+            KeyGen_encode_sk: begin
+                ram_raddr <= ram_4_offset + cnt;
+                s_m_reg_s_in[cnt-2] <= ram_rdata;
+                last_cycle <= #0.1 cnt == 7'd65;
+            end
+            KeyGen_encode_pk: begin
+                ram_raddr <= ram_6_offset + cnt;
+                t_c_reg_t_in[cnt-2] <= ram_rdata;
+                last_cycle <= #0.1 cnt == 7'd65;
+            end
+            Enc_decode_pk: begin
+                ram_wen <= 1'b1;
+                ram_waddr <= ram_0_offset + cnt;
+                ram_wdata <= t_c_reg_t[cnt];
+                last_cycle <= #0.1 cnt == 7'd62;
+            end
+            Enc_decode_m: begin
+                ram_wen <= cnt > 7'd1;
+                ram_waddr <= ram_3_offset + cnt - 8'd2;
+                ram_wdata <= decomp_out_data;
+                d <= 4'd1;
+                decomp_in_d1 <= s_m_reg_m[cnt];
+                last_cycle <= #0.1 cnt == 7'd32;
+            end
+            Enc_encode_c: begin
+//                if (cnt < 7'd2) begin
+//                    d <= 4'd10;
+//                    ram_raddr <= ram_6_offset + cnt;
+//                end
+//                else 
+                if (cnt < 7'd65) begin
+                    d <= 4'd10;
+                    ram_raddr <= ram_6_offset + cnt;
+                    t_c_reg_u_in[cnt-3] <= comp_out_d10;
+                end
+                else if (cnt == 7'd66 || cnt == 7'd65) begin
+                    d <= 4'd4;
+                    ram_raddr <= ram_0_offset + cnt - 7'd65;
+                    t_c_reg_u_in[cnt-3] <= comp_out_d10;
+                end
+                else begin
+                    d <= 4'd4;
+                    ram_raddr <= ram_0_offset + cnt - 7'd65;
+                    t_c_reg_v_in[cnt-68] <= comp_out_d4;
+                end
+                last_cycle <= #0.1 cnt == 7'd98;
+            end
+            Dec_decode_sk: begin
+                ram_wen <= 1'b1;
+                ram_waddr <= ram_3_offset + cnt;
+                ram_wdata <= s_m_reg_s[cnt];
+                last_cycle <= #0.1 cnt == 7'd62;
+            end
+            Dec_decode_c: begin
+                ram_wen <= cnt > 7'd1;
+                ram_waddr <= ram_0_offset + cnt - 8'd2;
+                ram_wdata <= decomp_out_data;
+                d <= cnt < 7'd64 ? 4'd10 : 4'd4;
+                decomp_in_d10 <= t_c_reg_u[cnt];
+                decomp_in_d4 <= t_c_reg_v[cnt-64];
+                last_cycle <= #0.1 cnt == 7'd96;
+            end
+            Dec_encode_m: begin
+                ram_raddr <= ram_0_offset + cnt;
+                s_m_reg_m_in[cnt-3] <= comp_out_d1;
+                last_cycle <= #0.1 cnt == 7'd33;
+            end
+        endcase
     end
-    for(i2=0; i2<32; i2=i2+1) begin
-        t_c_reg_v_in[i2] = t_c_reg_v[i2];
-        s_m_reg_m_in[i2] = s_m_reg_m[i2];
-    end
-    case(mode_reg)
-        KeyGen_encode_sk: begin
-            ram_raddr = ram_4_offset + cnt;
-            s_m_reg_s_in[cnt] = ram_rdata;
-            last_cycle = cnt == 7'd63;
-        end
-        KeyGen_encode_pk: begin
-            ram_raddr = ram_6_offset + cnt;
-            t_c_reg_t_in[cnt] = ram_rdata;
-            last_cycle = cnt == 7'd63;
-        end
-        Enc_decode_pk: begin
-            ram_wen = 1'b1;
-            ram_waddr = ram_0_offset + cnt;
-            ram_wdata = t_c_reg_t[cnt];
-            last_cycle = cnt == 7'd63;
-        end
-        Enc_decode_m: begin
-            ram_wen = cnt != 7'd0 ? 1'b1 : 1'b0;
-            ram_waddr = ram_3_offset + cnt - 8'd1;
-            ram_wdata = decomp_out_data;
-            d = 4'd1;
-            decomp_in_d1 = s_m_reg_m[cnt];
-            last_cycle = cnt == 7'd32;
-        end
-        Enc_encode_c: begin
-            if(cnt == 7'd0) begin
-                d = 4'd10;
-                ram_raddr = ram_6_offset + cnt;
-            end
-            else if(cnt < 7'd64) begin
-                d = 4'd10;
-                ram_raddr = ram_6_offset + cnt;
-                t_c_reg_u_in[cnt-1] = comp_out_d10;
-            end
-            else if(cnt == 7'd64) begin
-                d = 4'd4;
-                ram_raddr = ram_0_offset + cnt - 7'd64;
-                t_c_reg_u_in[cnt-1] = comp_out_d10;
-            end
-            else begin
-                d = 4'd4;
-                ram_raddr = ram_0_offset + cnt - 7'd64;
-                t_c_reg_v_in[cnt-65] = comp_out_d4;
-            end
-            last_cycle = cnt == 7'd96;
-        end
-        Dec_decode_sk: begin
-            ram_wen = 1'b1;
-            ram_waddr = ram_3_offset + cnt;
-            ram_wdata = s_m_reg_s[cnt];
-            last_cycle = cnt == 7'd63;
-        end
-        Dec_decode_c: begin
-            ram_wen = cnt != 7'd0 ? 1'b1 : 1'b0;
-            ram_waddr = ram_0_offset + cnt - 8'd1;
-            ram_wdata = decomp_out_data;
-            d = cnt < 7'd64 ? 4'd10 : 4'd4;
-            decomp_in_d10 = t_c_reg_u[cnt];
-            decomp_in_d4 = t_c_reg_v[cnt-64];
-            last_cycle = cnt == 7'd96;
-        end
-        Dec_encode_m: begin
-            ram_raddr = ram_0_offset + cnt;
-            s_m_reg_m_in[cnt-1] = comp_out_d1;
-            last_cycle = cnt == 7'd32;
-        end
-    endcase
 end
 
 endmodule

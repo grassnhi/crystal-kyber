@@ -70,7 +70,7 @@ module axi_kyber_wrapper(
     parameter ram_pkin_offset = 8'd0;
     parameter ram_m_in_offset = 8'd50;
     parameter ram_coin_offset = 8'd52;
-    parameter ram_skin_offset = 8'd100;
+    parameter ram_skin_offset = 8'd54;
     parameter ram_c_in_offset = 8'd102;
 
     parameter ram_pkout_offset = 8'd128;
@@ -94,9 +94,9 @@ module axi_kyber_wrapper(
     
     reg [255:0] random_coin;
     reg [255:0] m_in;
-    wire [6399:0] pk_in;
-    wire [6143:0] sk_in;
-    wire [6143:0] c_in;
+    reg [6399:0] pk_in;
+    reg [6143:0] sk_in;
+    reg [6143:0] c_in;
     wire [6399:0] pk_out;
     wire [6143:0] sk_out;
     wire [6143:0] c_out;
@@ -124,7 +124,7 @@ module axi_kyber_wrapper(
     reg kyber_bram_web;
   
     reg read_done, write_done;
-    reg [7:0] cnt;
+    reg [6:0] cnt;
     
     // AXI-BRAM Controller Instance
     axi_ctrl_wrapper axi_ctrl_wrapper_i (
@@ -194,18 +194,28 @@ module axi_kyber_wrapper(
     );
 
     // AXI WRITE REG
-    always @(posedge s_axi_aclk or negedge s_axi_aresetn) begin
-        if (!s_axi_aresetn) begin
+    always @(posedge bram_clk_a or posedge bram_rst_a) begin
+        if(bram_rst_a) begin
             start_reg <= 128'b0;
             mode_reg <= 128'b0;
         end else if (reg_select & bram_we_a) begin 
             case (bram_addr_a[2:0])
-                3'd0: start_reg <= s_axi_wdata;
-                3'd2: mode_reg <= s_axi_wdata;
-                default: ;
+                3'd0: begin 
+                    start_reg <= s_axi_wdata;
+                    mode_reg <= mode_reg;
+                end
+                3'd2: begin
+                    mode_reg <= s_axi_wdata;
+                    start_reg <= start_reg;
+                end                    
+                default: begin
+                    mode_reg <= s_axi_wdata;
+                    start_reg <= start_reg;                
+                end
             endcase // need 1 cycle to write
         end else if (current_state != IDLE) begin
             start_reg <= 128'b0;
+            mode_reg <= mode_reg;
         end
     end
     
@@ -225,8 +235,8 @@ module axi_kyber_wrapper(
         end
     end
 
-    always @(posedge s_axi_aclk or negedge s_axi_aresetn) begin
-        if(bram_rst_a) begin
+    always @(posedge bram_clk_a or posedge bram_rst_a) begin
+        if (bram_rst_a) begin
             bram_rddata_a <= 128'b0;
         end else begin
             if (reg_select) begin 
@@ -290,18 +300,45 @@ module axi_kyber_wrapper(
             kyber_bram_addr <= 0;
             kyber_bram_enb <= 0;
             kyber_bram_web <= 0;
+            read_done <= 0;
+            write_done <= 0;
+            m_in <= 0;
+            c_in <= 0;
+            sk_in <= 0;
+            pk_in <= 0;
         end else begin
+            m_in <= m_in;
+            c_in <= c_in;
+            sk_in <= sk_in;
+            pk_in <= pk_in;
             case (current_state)
                 READ: begin
-                    if (mode_reg[1:0] == 1) begin
+                    if (mode_reg[1:0] == 1 && start_reg[1] == 1) begin
                         kyber_bram_addr <= ram_pkin_offset + cnt;
                         kyber_bram_enb <= 1'b1;
                         kyber_bram_web <= 1'b0;
-                        read_done <= (cnt == 8'd54);
+                        pk_in[128*cnt +: 128] <= kyber_bram_rddata;
+                        if(cnt == 7'd50) begin
+                            sk_in[128*(cnt-7'd50) +: 128] = kyber_bram_rddata;
+                        end else if(cnt == 7'd52) begin
+                            c_in[128*(cnt-7'd52) +: 128] <= kyber_bram_rddata;
+                        end
+                        read_done <= (cnt == 7'd54);
+                    end if (mode_reg[1:0] == 1 && start_reg[1] == 0) begin
+                        kyber_bram_addr <= ram_m_in_offset + cnt;
+                        kyber_bram_enb <= 1'b1;
+                        kyber_bram_web <= 1'b0;
+                        m_in[128*cnt +: 128] = kyber_bram_rddata;
+                        read_done <= (cnt == 7'd2);
                     end else if (mode_reg[1:0] == 2) begin
                         kyber_bram_addr <= ram_skin_offset + cnt;
                         kyber_bram_enb <= 1'b1;
                         kyber_bram_web <= 1'b0;
+                        sk_in[128*cnt +: 128] <= kyber_bram_rddata;
+                        if(cnt == 7'd48) begin
+                            c_in[128*(cnt-7'd48) +: 128] = kyber_bram_rddata;
+                        end
+                        read_done <= (cnt == 7'd50);
                     end
                 end
                 WRITE: begin
@@ -309,20 +346,31 @@ module axi_kyber_wrapper(
                         kyber_bram_addr <= ram_pkout_offset + cnt;
                         kyber_bram_enb <= 1'b1;
                         kyber_bram_web <= 1'b1;
+                        kyber_bram_wrdata <= pk_out[128*cnt +: 128];
+                        if(cnt == 7'd50) begin
+                            kyber_bram_wrdata <= sk_out[128*(cnt-7'd50) +: 128];
+                        end
+                        read_done <= (cnt == 7'd98);
                     end else if (mode_reg[1:0] == 1) begin
                         kyber_bram_addr <= ram_c_out_offset + cnt;
                         kyber_bram_enb <= 1'b1;
                         kyber_bram_web <= 1'b1;
+                        kyber_bram_wrdata <= c_out[128*cnt +: 128];
+                        read_done <= (cnt == 7'd2);
                     end else if (mode_reg[1:0] == 2) begin
                         kyber_bram_addr <= ram_m_out_offset + cnt;
                         kyber_bram_enb <= 1'b1;
                         kyber_bram_web <= 1'b1;
+                        kyber_bram_wrdata <= m_out[128*cnt +: 128];
+                        read_done <= (cnt == 7'd2);
                     end
                 end
                 default: begin
                     kyber_bram_addr <= 0;
                     kyber_bram_enb <= 0;
                     kyber_bram_web <= 0;
+                    read_done <= 0;
+                    write_done <= 0;
                 end
             endcase
         end
