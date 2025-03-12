@@ -3,7 +3,7 @@
 module A_generator(  input [0:272-1] M, //256+8+8
                     input [7:0] ram_w_start_offset, 
                     input clk,rst, active,
-                    output reg enw,
+                    output reg enw, finish,
                     output reg [7:0] waddr,
                     output reg [95:0] dout);
 
@@ -11,13 +11,16 @@ wire [11:0] d1,d2,d3,d4,d5,d6,d7,d8;
 wire [11:0] i_0,i_1,i_2,i2_0,i2_1,i2_2,i3_0,i3_1,i3_2,i4_0,i4_1,i4_2;
 wire [3072-1:0] b;
 wire enable;
-reg [1:0] cs,ns;
+reg [1:0] current_state,next_state;
 reg [7:0]counter;
 reg [11:0] i;
 
-parameter s0 = 2'b00,
-          s1 = 2'b01,
-          s2 = 2'b10;
+parameter IDLE      = 2'b00,
+          PROCESS   = 2'b01,
+          COMPLETE  = 2'b10;
+
+// parameter IDLE      = 1'b0,
+//           PROCESS   = 1'b1;
 
 SHAKE_128 XOF(.M(M),.active(active),.clk(clk),.rst(rst),.finish(enable),.Z(b));
 
@@ -52,37 +55,45 @@ assign d8 = ({4'd0, b[i4_1+:8]}>>4) + ({4'd0, b[i4_2+:8]}<<4);
 
 always@(posedge clk or posedge rst)begin
     if(rst)begin
-        cs <= 2'd0;
+        current_state <= 2'd0;
         counter <= 8'd0;
         i <= 12'd0;
     end
     else begin
-        cs <= ns;
-        counter <= ((ns == s1)&&(cs != s0))? counter + 8'd1: counter;
-        i <= ((ns == s1)&&(cs != s0))? i+12'd3: i; //i=i+3
+        current_state <= next_state;
+        counter <= ((next_state == PROCESS)&&(current_state != IDLE))? counter + 8'd1: counter;
+        i <= ((next_state == PROCESS)&&(current_state != IDLE))? i+12'd3: i; //i=i+3
 
+        // if (next_state == IDLE) begin
+        //     counter <= 8'd0;
+        //     i <= 12'd0;
+        // end
     end
 end
 
-always@(cs or enable or counter)begin
+always@(current_state or enable or counter)begin
 	//next state
-	case(cs)
-		s0: ns = (enable)? s1:s0;
-		s1: ns =(counter < 8'd31)? s1:s2;
-		s2: ns = s2;
-		default: ns = s0;
+	case(current_state)
+		IDLE:       next_state = (enable)? PROCESS:IDLE;
+        // PROCESS:    next_state =(counter < 8'd31)? PROCESS:IDLE;
+		PROCESS:    next_state =(counter < 8'd31)? PROCESS:COMPLETE;
+		COMPLETE:   next_state = COMPLETE;
+		default:    next_state = IDLE;
 	endcase	
 end
 
 //output
-always@(cs or d1 or d2 or d3 or d4 or d5 or d6 or d7 or d8 or counter or ram_w_start_offset)begin
-	case(cs)
-		s0: begin
+always@(current_state or d1 or d2 or d3 or d4 or d5 or d6 or d7 or d8 or counter or ram_w_start_offset)begin
+	case(current_state)
+		IDLE: begin
+            // counter = 8'd0;
+            // i = 12'd0;
             enw = 1'b0;
+            finish = 1'b0;
             waddr = 8'd0;
             dout = 96'd0;                
         end           
-		s1: begin
+		PROCESS: begin
             //next clk write 8 coeff
             enw = 1'b1; //enw=1
             waddr = ram_w_start_offset + counter;
@@ -95,17 +106,18 @@ always@(cs or d1 or d2 or d3 or d4 or d5 or d6 or d7 or d8 or counter or ram_w_s
             dout[60 +:12]=(d4 >= 12'd3329)? {1'b0,{d4[10:0]}}:d4;
             dout[72 +:12]=(d7 >= 12'd3329)? {1'b0,{d7[10:0]}}:d7;
             dout[84 +:12]=(d8 >= 12'd3329)? {1'b0,{d8[10:0]}}:d8;
-                       
-        end                
-        s2: begin
+        end       
+        COMPLETE: begin
             enw = 1'b0;
+            finish = 1'b1;
             waddr = 8'd0;
             dout = 96'd0;                     
-        end
+        end         
 		default:  begin
             enw = 1'b0;
+            finish = 1'b0;
             waddr = 8'd0;
-            dout = 96'd0;                    
+            dout = 96'd0;
         end
         endcase
 end

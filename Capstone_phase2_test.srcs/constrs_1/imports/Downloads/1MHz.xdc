@@ -8,7 +8,7 @@
 # 10 ns  = 100 MHz
 # 20 ns  = 50 MHz
 
-create_clock -name clk -period 10 [get_ports clk];
+create_clock -name clk -period 1 [get_ports clk];
 
 # ================================================
 # Delay Definitions

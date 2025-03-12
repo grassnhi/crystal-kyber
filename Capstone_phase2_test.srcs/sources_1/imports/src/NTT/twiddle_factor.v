@@ -5,7 +5,7 @@ module twiddle_factor(
 );
 
 reg [11:0] data [0:127];
-// (* rom_style = "block" *) 
+
 assign dout = {data[addr + 1], data[addr]};
 
 initial begin

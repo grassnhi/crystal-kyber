@@ -1,11 +1,10 @@
-// `include "../Hash/SHAKE_256.v"
-`include "SHAKE_256.v"
+`include "../Hash/SHAKE_256.v"
 //CBD
 module small_poly_generator(input [0:264-1] M, //256+8 (s||b)
                             input [7:0] ram_w_start_offset,
                             input [1:0] n_num, //1 => n1; 2 => n2
                             input clk,rst, active,
-                            output reg enw,
+                            output reg enw, finish,
                             output reg [7:0] waddr,
                             output reg [95:0] dout);
 
@@ -22,6 +21,9 @@ reg [7:0] counter;
 parameter IDLE      = 2'b00,
           PROCESS   = 2'b01,
           COMPLETE  = 2'b10;
+
+// parameter IDLE      = 1'b0,
+//           PROCESS   = 1'b1;
 
 SHAKE_256 PRF(.M(M),.active(active),.n_num(n_num),.clk(clk),.rst(rst),.finish(enable),.Z(b));
 
@@ -69,6 +71,11 @@ always@(posedge clk or posedge rst)begin
         current_state <= next_state;
         counter_i <= ((next_state == PROCESS)&&(current_state != IDLE))? counter_i + 8'd2: counter_i;//i=i+2
         counter <= ((next_state == PROCESS)&&(current_state != IDLE))? counter + 8'd1: counter;//cnt=cnt+1
+
+        // if (next_state == IDLE) begin
+        //     counter_i <= 8'd0;
+        //     counter <= 8'd0;
+        // end
     end
 end
 
@@ -77,6 +84,7 @@ always@(current_state or enable or counter)begin
 	//next state
 	case(current_state)
 		IDLE:       next_state = (enable)? PROCESS:IDLE;
+        // PROCESS:    next_state = (counter < 8'd31)? PROCESS:IDLE;
 		PROCESS:    next_state = (counter < 8'd31)? PROCESS:COMPLETE;
 		COMPLETE:   next_state = COMPLETE;
         
@@ -87,7 +95,10 @@ end
 always@(*)begin
 	case(current_state)
 		IDLE: begin
+            // counter_i = 8'd0;
+            // counter = 8'd0;
             enw = 1'b0;
+            finish = 1'b0;
             waddr = 8'd0;
             dout = 96'd0;                
         end           
@@ -105,17 +116,21 @@ always@(*)begin
             dout[60 +:12]= (a_temp4 < b_temp4)? 12'd3329+a_temp4-b_temp4 :a_temp4-b_temp4;
             dout[72 +:12]= (a_temp7 < b_temp7)? 12'd3329+a_temp7-b_temp7 :a_temp7-b_temp7;
             dout[84 +:12]= (a_temp8 < b_temp8)? 12'd3329+a_temp8-b_temp8 :a_temp8-b_temp8;
-        end             
-		COMPLETE: begin
-            enw = 1'b0;
-            waddr = 8'd0;
-            dout = 96'd0;
-        end
-        default: begin
-            enw = 1'b0;
-            waddr = 8'd0;
-            dout = 96'd0;
-        end
+        end         
+        //  default: begin
+        //  end
+		 COMPLETE: begin
+             enw = 1'b0;
+             finish = 1'b1;
+             waddr = 8'd0;
+             dout = 96'd0;
+         end
+       default: begin
+           enw = 1'b0;
+           finish = 1'b0;
+           waddr = 8'd0;
+           dout = 96'd0;
+       end
     endcase
 end
 

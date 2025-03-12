@@ -6,7 +6,6 @@ module rom(
     input [4:0] rdata_addr,
     output [95:0] rdata
 );
-// (* rom_style = "block" *) 
 reg [95:0] ROM [0:31];
 integer i;
 always@(posedge clk or posedge rst)begin
