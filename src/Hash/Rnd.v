@@ -1,8 +1,8 @@
 
-`include "../Hash/Theta.v"
-`include "../Hash/Rho.v"
-`include "../Hash/Pi.v"
-`include "../Hash/Chi.v"
+`include "Theta.v"
+`include "Rho.v"
+`include "Pi.v"
+`include "Chi.v"
 
 module Rnd(input [0:1599]S,
         input [7:0]ir,

@@ -1,4 +1,4 @@
-`include "../Hash/KECCAK_p.v"
+`include "KECCAK_p.v"
 //PRF-n1(n1=3), n2(n2=2)
 module SHAKE_256(input [0:264-1] M,
                 input active, //Let stage go to s1 

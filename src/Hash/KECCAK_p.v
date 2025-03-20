@@ -1,8 +1,4 @@
-`ifndef KECCAK_P
-`define KECCAK_P
-
-`include "../Hash/Rnd.v"
-
+//`include "Rnd.v"
 module KECCAK_p(input [0:1599] S,
                 input [4:0] nr,
                 input string_val, //Let stage go to s1
@@ -97,5 +93,3 @@ end
 
 
 endmodule
-
-`endif

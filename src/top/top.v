@@ -195,16 +195,25 @@ coder code(
 
 );
 
-ram_96x256 ram(
-    .clk(clk),
-    .rst(rst),
-    .wen(wen_temp),
-    .raddr(raddr_temp),
-    .waddr(waddr_temp),
-    .din(wdata_temp),
-    .dout(RAM_rdata)
-);
-
+//ram_96x256 ram(
+//    .clk(clk),
+//    .rst(rst),
+//    .wen(wen_temp),
+//    .raddr(raddr_temp),
+//    .waddr(waddr_temp),
+//    .din(wdata_temp),
+//    .dout(RAM_rdata)
+//);
+Ram_wrapper ram
+   (.addra_0(waddr_temp),
+    .addrb_0(raddr_temp),
+    .clka_0(clk),
+    .clkb_0(clk),
+    .dina_0(wdata_temp),
+    .doutb_0(RAM_rdata),
+    .ena_0(wen_temp),
+    .enb_0(1),
+    .wea_0(1));
 always@(*)begin
     case(rho_sel)
         1'b0:begin

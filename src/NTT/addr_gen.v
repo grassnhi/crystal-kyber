@@ -21,7 +21,7 @@ reg [6:0] coef_addr_cnt;
 wire [7:0] cycle_cnt_sub_2;
 assign cycle_cnt_sub_2 = clk_counter - 2;
 
-reg [4:0] waddr_shift_reg [5:0];
+reg [4:0] waddr_shift_reg [6:0];
 
 always @(*) begin
     case(mode)
@@ -134,14 +134,14 @@ end
 integer i;
 always @(posedge clk or posedge rst) begin
     if(rst) begin
-        for(i=0; i<6; i=i+1) waddr_shift_reg[i] <= 0;
+        for(i=0; i<7; i=i+1) waddr_shift_reg[i] <= 0;
     end
     else begin
         case(mode)
         `NTT, 
         `INVNTT: begin
         waddr_shift_reg[0] <= r_addr;
-        for(i=1; i<6; i=i+1) waddr_shift_reg[i] <= waddr_shift_reg[i-1];
+        for(i=1; i<7; i=i+1) waddr_shift_reg[i] <= waddr_shift_reg[i-1];
         end
         endcase
     end
@@ -152,13 +152,13 @@ always @(*) begin
     case(mode)
     `NTT, 
     `INVNTT: begin
-       w_addr = waddr_shift_reg[5];
+       w_addr = waddr_shift_reg[6];
     end
     `MULT: begin
-       w_addr = clk_counter[7:2] - 3;
+       w_addr = (clk_counter - 13) >> 2;
     end
     `ADDSUB: begin
-       w_addr = clk_counter[7:1] - 2;
+       w_addr = (clk_counter - 5) >> 1;
     end
     endcase
 end

@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
- `include "add.v"
- `include "sub.v"
- `include "mult.v"
+// `include "add.v"
+// `include "sub.v"
+// `include "mult.v"
 
 module butterfly_core(
     input clk,

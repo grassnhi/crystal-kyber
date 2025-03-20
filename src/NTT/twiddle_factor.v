@@ -1,13 +1,14 @@
 
 module twiddle_factor(
+    input clk,
     input [6:0] addr,
-    output [23:0] dout
+    output reg [23:0] dout
 );
 
 reg [11:0] data [0:127];
-
-assign dout = {data[addr + 1], data[addr]};
-
+always@(posedge clk)begin
+    dout <= {data[addr + 1], data[addr]};
+end
 initial begin
     data[0] <= 12'h001;
     data[1] <= 12'h6c1;

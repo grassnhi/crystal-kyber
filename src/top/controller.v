@@ -153,9 +153,9 @@ always @(posedge clk or posedge rst) begin
     else begin
         cycle_cnt <= ncnt;
         if (state_reg == FINISH && start) state_reg <= mode;
-        else if ( (state_reg == KeyGen && cycle_cnt == 12'd2001) || 
-                  (state_reg == Enc && cycle_cnt == 12'd2654)    || 
-                  (state_reg == Dec && cycle_cnt == 12'd1174)    ) state_reg <= FINISH;
+        else if ( (state_reg == KeyGen && cycle_cnt == 12'd2018) || 
+                  (state_reg == Enc && cycle_cnt == 12'd2675)    || 
+                  (state_reg == Dec && cycle_cnt == 12'd1181)    ) state_reg <= FINISH;
     end
 end
 always @(*) begin
@@ -164,17 +164,17 @@ end
 
 // ntt logic
 always @(*) begin
-    case(cycle_cnt)
-    12'd119, 12'd349, 12'd579, 12'd719,
-    12'd859, 12'd1089, 12'd1157, 12'd1225,
-    12'd1365, 12'd1505, 12'd1735, 12'd1803 : ntt_start = state_reg == KeyGen;
-    12'd90, 12'd320, 12'd550, 12'd690,
-    12'd830, 12'd898, 12'd1128, 12'd1196,
-    12'd1336, 12'd1476, 12'd1544, 12'd1774,
-    12'd1842, 12'd1982, 12'd2122, 12'd2190,
-    12'd2420, 12'd2488 : ntt_start = state_reg == Enc;
-    12'd34, 12'd264, 12'd494, 12'd634,
-    12'd774, 12'd842, 12'd1072 : ntt_start = state_reg == Dec;
+    case(cycle_cnt)//231, 231, 141, 141, 231, 69, 69, 141, 141, 231, 69
+    12'd120, 12'd351, 12'd582, 12'd723,
+    12'd864, 12'd1095, 12'd1164, 12'd1233,
+    12'd1374, 12'd1515, 12'd1746, 12'd1815 : ntt_start = state_reg == KeyGen;
+    12'd90, 12'd321, 12'd552, 12'd693,
+    12'd834, 12'd903, 12'd1134, 12'd1203,
+    12'd1344, 12'd1485, 12'd1554, 12'd1785,
+    12'd1854, 12'd1995, 12'd2136, 12'd2205,
+    12'd2436, 12'd2505 : ntt_start = state_reg == Enc;
+    12'd34, 12'd265, 12'd496, 12'd637,
+    12'd779, 12'd848, 12'd1080 : ntt_start = state_reg == Dec;
     default : ntt_start = 1'b0;
     endcase
 end
@@ -185,50 +185,50 @@ always @(posedge clk or posedge rst) begin
         KeyGen: begin
         case(cycle_cnt)
         12'd0: ntt_state <= NTT_st_NTT_s0;
-        12'd348: ntt_state <= NTT_st_NTT_s1;
-        12'd578: ntt_state <= NTT_st_MUL_A00_s0;
-        12'd718: ntt_state <= NTT_st_MUL_A01_s1;
-        12'd858: ntt_state <= NTT_st_NTT_e0;
-        12'd1088: ntt_state <= NTT_st_ADD_t0;
-        12'd1156: ntt_state <= NTT_st_ADD_e0;
-        12'd1224: ntt_state <= NTT_st_MUL_A10_s0;
-        12'd1364: ntt_state <= NTT_st_MUL_A11_s1;
-        12'd1504: ntt_state <= NTT_st_NTT_e1;
-        12'd1734: ntt_state <= NTT_st_ADD_t1;
-        12'd1802: ntt_state <= NTT_st_ADD_e1;
+        12'd350: ntt_state <= NTT_st_NTT_s1;
+        12'd581: ntt_state <= NTT_st_MUL_A00_s0;
+        12'd722: ntt_state <= NTT_st_MUL_A01_s1;
+        12'd863: ntt_state <= NTT_st_NTT_e0;
+        12'd1094: ntt_state <= NTT_st_ADD_t0;
+        12'd1163: ntt_state <= NTT_st_ADD_e0;
+        12'd1232: ntt_state <= NTT_st_MUL_A10_s0;
+        12'd1373: ntt_state <= NTT_st_MUL_A11_s1;
+        12'd1514: ntt_state <= NTT_st_NTT_e1;
+        12'd1745: ntt_state <= NTT_st_ADD_t1;
+        12'd1814: ntt_state <= NTT_st_ADD_e1;
         endcase
         end
         Enc: begin
         case(cycle_cnt)
         12'd0: ntt_state <= NTT_st_NTT_r0;
-        12'd319: ntt_state <= NTT_st_NTT_r1;
-        12'd549: ntt_state <= NTT_st_MUL_A00_r0;
-        12'd689: ntt_state <= NTT_st_MUL_A10_r1;
-        12'd829: ntt_state <= NTT_st_ADD_u0;
-        12'd897: ntt_state <= NTT_st_INVNTT_u0;
-        12'd1127: ntt_state <= NTT_st_ADD_e10;
-        12'd1195: ntt_state <= NTT_st_MUL_A01_r0;
-        12'd1335: ntt_state <= NTT_st_MUL_A11_r1;
-        12'd1475: ntt_state <= NTT_st_ADD_u1;
-        12'd1543: ntt_state <= NTT_st_INVNTT_u1;
-        12'd1773: ntt_state <= NTT_st_ADD_e11;
-        12'd1841: ntt_state <= NTT_st_MUL_t0_r0;
-        12'd1981: ntt_state <= NTT_st_MUL_t1_r1;
-        12'd2121: ntt_state <= NTT_st_ADD_v;
-        12'd2189: ntt_state <= NTT_st_INVNTT_v;
-        12'd2419: ntt_state <= NTT_st_ADD_e2;
-        12'd2487: ntt_state <= NTT_st_ADD_m;
+        12'd320: ntt_state <= NTT_st_NTT_r1;
+        12'd551: ntt_state <= NTT_st_MUL_A00_r0;
+        12'd692: ntt_state <= NTT_st_MUL_A10_r1;
+        12'd833: ntt_state <= NTT_st_ADD_u0;
+        12'd902: ntt_state <= NTT_st_INVNTT_u0;
+        12'd1133: ntt_state <= NTT_st_ADD_e10;
+        12'd1202: ntt_state <= NTT_st_MUL_A01_r0;
+        12'd1343: ntt_state <= NTT_st_MUL_A11_r1;
+        12'd1484: ntt_state <= NTT_st_ADD_u1;
+        12'd1553: ntt_state <= NTT_st_INVNTT_u1;
+        12'd1784: ntt_state <= NTT_st_ADD_e11;
+        12'd1853: ntt_state <= NTT_st_MUL_t0_r0;
+        12'd1994: ntt_state <= NTT_st_MUL_t1_r1;
+        12'd2135: ntt_state <= NTT_st_ADD_v;
+        12'd2204: ntt_state <= NTT_st_INVNTT_v;
+        12'd2435: ntt_state <= NTT_st_ADD_e2;
+        12'd2504: ntt_state <= NTT_st_ADD_m;
         endcase
         end
         Dec: begin
         case(cycle_cnt)
         12'd0: ntt_state <= NTT_st_NTT_u0;
-        12'd263: ntt_state <= NTT_st_NTT_u1;
-        12'd493: ntt_state <= NTT_st_MUL_s0_u0;
-        12'd633: ntt_state <= NTT_st_MUL_s1_u1;
-        12'd773: ntt_state <= NTT_st_ADD_su;
-        12'd841: ntt_state <= NTT_st_INVNTT_su;
-        12'd1071: ntt_state <= NTT_st_SUB_v_su;
+        12'd264: ntt_state <= NTT_st_NTT_u1;
+        12'd495: ntt_state <= NTT_st_MUL_s0_u0;
+        12'd636: ntt_state <= NTT_st_MUL_s1_u1;
+        12'd778: ntt_state <= NTT_st_ADD_su;
+        12'd847: ntt_state <= NTT_st_INVNTT_su;
+        12'd1079: ntt_state <= NTT_st_SUB_v_su;
         endcase
         end
         default: ntt_state <= 5'd0;
@@ -633,7 +633,7 @@ always @(*) begin
     else begin
         case(state_reg)
         KeyGen: begin
-            if(cycle_cnt == 12'd151 || cycle_cnt == 12'd348 || cycle_cnt == 12'd492 || cycle_cnt == 12'd611) A_gen_rst = 1'b1;
+            if(cycle_cnt == 12'd151 || cycle_cnt == 12'd348 || cycle_cnt == 12'd495 || cycle_cnt == 12'd614) A_gen_rst = 1'b1;
             else A_gen_rst = 1'b0;
         end
         Enc: begin
@@ -647,7 +647,7 @@ end
 always @(*) begin
     case(state_reg)
     KeyGen: begin
-        A_gen_active = cycle_cnt == 12'd33 || cycle_cnt == 12'd152 || cycle_cnt == 12'd349 || cycle_cnt == 12'd493;
+        A_gen_active = cycle_cnt == 12'd33 || cycle_cnt == 12'd152 || cycle_cnt == 12'd349 || cycle_cnt == 12'd496;
     end
     Enc: begin
         A_gen_active = cycle_cnt == 12'd4 || cycle_cnt == 12'd123 || cycle_cnt == 12'd242 || cycle_cnt == 12'd361;
@@ -702,15 +702,15 @@ always @(*) begin
     coder_load_input_Enc = 1'b0;
     case(state_reg)
     KeyGen: begin
-        coder_active = cycle_cnt == 12'd1871 || cycle_cnt == 12'd1936;
+        coder_active = cycle_cnt == 12'd1884 || cycle_cnt == 12'd1952;
     end
     Enc: begin
         coder_load_input_Enc = cycle_cnt == 12'd0;
-        coder_active = cycle_cnt == 12'd1544 || cycle_cnt == 12'd1842 || cycle_cnt == 12'd2556;
+        coder_active = cycle_cnt == 12'd1554 || cycle_cnt == 12'd1854 || cycle_cnt == 12'd2574;
     end
     Dec: begin
         coder_load_input_Dec = cycle_cnt == 12'd0;
-        coder_active = cycle_cnt == 12'd0 || cycle_cnt == 12'd98 || cycle_cnt == 12'd1140;
+        coder_active = cycle_cnt == 12'd0 || cycle_cnt == 12'd98 || cycle_cnt == 12'd1149;
     end
     default: coder_active = 1'b0;
     endcase
@@ -721,12 +721,12 @@ always @(posedge clk or posedge rst) begin
         case(state_reg)
         KeyGen: begin
             if(cycle_cnt == 12'd0) coder_state <= coder_st_encode_pk;
-            else if(cycle_cnt == 12'd1935) coder_state <= coder_st_encode_sk;
+            else if(cycle_cnt == 12'd1951) coder_state <= coder_st_encode_sk;
         end
         Enc: begin
             if(cycle_cnt == 12'd0) coder_state <= coder_st_decode_pk;
-            else if(cycle_cnt == 12'd1841) coder_state <= coder_st_decode_m;
-            else if(cycle_cnt == 12'd2555) coder_state <= coder_st_encode_c;
+            else if(cycle_cnt == 12'd1853) coder_state <= coder_st_decode_m;
+            else if(cycle_cnt == 12'd2573) coder_state <= coder_st_encode_c;
         end
         Dec: begin
             if(cycle_cnt == 12'd0) coder_state <= coder_st_decode_c;
@@ -772,8 +772,8 @@ assign rho_sel = state_reg != KeyGen;
 
 always @(*) begin
     case(state_reg)
-    KeyGen: ram_r_sel = cycle_cnt < 12'd1871;
-    Enc: ram_r_sel = cycle_cnt < 12'd2556;
+    KeyGen: ram_r_sel = cycle_cnt < 12'd1879;
+    Enc: ram_r_sel = cycle_cnt < 12'd2573;
     Dec: ram_r_sel = cycle_cnt < 12'd1140;
     default: ram_r_sel = 1'b0;
     endcase
@@ -786,14 +786,14 @@ always @(*) begin
         else if(cycle_cnt < 12'd151) ram_w_sel = ram_w_from_A_gen;
         else if(cycle_cnt < 12'd210) ram_w_sel = ram_w_from_CBD;
         else if(cycle_cnt < 12'd270) ram_w_sel = ram_w_from_A_gen;
-        else if(cycle_cnt < 12'd349) ram_w_sel = ram_w_from_ntt;
+        else if(cycle_cnt < 12'd352) ram_w_sel = ram_w_from_ntt;
         else if(cycle_cnt < 12'd467) ram_w_sel = ram_w_from_A_gen;
-        else if(cycle_cnt < 12'd579) ram_w_sel = ram_w_from_ntt;
-        else if(cycle_cnt < 12'd611) ram_w_sel = ram_w_from_A_gen;
+        else if(cycle_cnt < 12'd582) ram_w_sel = ram_w_from_ntt;
+        else if(cycle_cnt < 12'd614) ram_w_sel = ram_w_from_A_gen;
         else if(cycle_cnt < 12'd669) ram_w_sel = ram_w_from_CBD;
-        else if(cycle_cnt < 12'd719) ram_w_sel = ram_w_from_ntt;
+        else if(cycle_cnt < 12'd723) ram_w_sel = ram_w_from_ntt;
         else if(cycle_cnt < 12'd809) ram_w_sel = ram_w_from_CBD;
-        else if(cycle_cnt < 12'd1871) ram_w_sel = ram_w_from_ntt;
+        else if(cycle_cnt < 12'd1884) ram_w_sel = ram_w_from_ntt;
         else ram_w_sel = ram_w_from_coder;
     end
     Enc: begin
@@ -801,24 +801,24 @@ always @(*) begin
         else if(cycle_cnt < 12'd122) ram_w_sel = ram_w_from_A_gen;
         else if(cycle_cnt < 12'd181) ram_w_sel = ram_w_from_CBD;
         else if(cycle_cnt < 12'd241) ram_w_sel = ram_w_from_A_gen;
-        else if(cycle_cnt < 12'd320) ram_w_sel = ram_w_from_ntt;
+        else if(cycle_cnt < 12'd323) ram_w_sel = ram_w_from_ntt;
         else if(cycle_cnt < 12'd360) ram_w_sel = ram_w_from_A_gen;
         else if(cycle_cnt < 12'd423) ram_w_sel = ram_w_from_CBD;
         else if(cycle_cnt < 12'd479) ram_w_sel = ram_w_from_A_gen;
-        else if(cycle_cnt < 12'd550) ram_w_sel = ram_w_from_ntt;
+        else if(cycle_cnt < 12'd554) ram_w_sel = ram_w_from_ntt;
         else if(cycle_cnt < 12'd612) ram_w_sel = ram_w_from_CBD;
-        else if(cycle_cnt < 12'd898) ram_w_sel = ram_w_from_ntt;
+        else if(cycle_cnt < 12'd905) ram_w_sel = ram_w_from_ntt;
         else if(cycle_cnt < 12'd960) ram_w_sel = ram_w_from_CBD;
-        else if(cycle_cnt < 12'd1544) ram_w_sel = ram_w_from_ntt;
-        else if(cycle_cnt < 12'd1609) ram_w_sel = ram_w_from_coder;
-        else if(cycle_cnt < 12'd1842) ram_w_sel = ram_w_from_ntt;
-        else if(cycle_cnt < 12'd1876) ram_w_sel = ram_w_from_coder;
-        else if(cycle_cnt < 12'd2556) ram_w_sel = ram_w_from_ntt;
+        else if(cycle_cnt < 12'd1554) ram_w_sel = ram_w_from_ntt;
+        else if(cycle_cnt < 12'd1620) ram_w_sel = ram_w_from_coder;
+        else if(cycle_cnt < 12'd1854) ram_w_sel = ram_w_from_ntt;
+        else if(cycle_cnt < 12'd1890) ram_w_sel = ram_w_from_coder;
+        else if(cycle_cnt < 12'd2574) ram_w_sel = ram_w_from_ntt;
         else ram_w_sel = ram_w_from_coder;
     end
     Dec: begin
-        if(cycle_cnt < 12'd163) ram_w_sel = ram_w_from_coder;
-        else if(cycle_cnt < 12'd1140) ram_w_sel = ram_w_from_ntt;
+        if(cycle_cnt < 12'd164) ram_w_sel = ram_w_from_coder;
+        else if(cycle_cnt < 12'd1149) ram_w_sel = ram_w_from_ntt;
         else ram_w_sel = ram_w_from_coder;
     end
     default: ram_w_sel = 1'b0;

@@ -1,7 +1,7 @@
-`include "addr_gen.v"
-`include "butterfly.v"
-`include "twiddle_factor.v"
-`include "ntt_rom.v"
+
+//`include "butterfly.v"
+//`include "twiddle_factor.v"
+//`include "ntt_rom.v"
 
 module ntt_processor (
     input clk,
@@ -60,6 +60,7 @@ addr_gen AG(
 assign r_data_addr = r_addr_reg;
 assign w_data_addr = w_addr_reg;
 twiddle_factor FACTOR(
+    .clk(clk),
     .addr(coef_addr),
     .dout(coef_reg)
     );
@@ -99,14 +100,14 @@ always @(*) begin
     end
     `MULT: begin
         ntt_stage = {1'b0, ntt_counter[1:0]};
-        in_buf_pre_load = ntt_counter[1:0] == 2'b0 && stage == PROCESSING;
-        in_buf_load = ntt_counter[1:0] == 2'b1;
+        in_buf_pre_load = ntt_counter[1:0] == 2'b01 && stage == PROCESSING;
+        in_buf_load = ntt_counter[1:0] == 2'b10;
         ntt_type = mode == ntt_counter[0];
     end
     `ADDSUB: begin
         ntt_stage = {2'b0, ntt_counter[0]};
-        in_buf_pre_load = ntt_counter[0] == 0;
-        in_buf_load = ntt_counter[0] == 1;
+        in_buf_pre_load = ntt_counter[0] == 1 && stage == PROCESSING;
+        in_buf_load = ntt_counter[0] == 0;
         ntt_type = add_or_sub;
     end
     endcase
@@ -117,7 +118,7 @@ always @(*)begin
             if(start)begin
                 temp_stage = PROCESSING;
                 in_data_reg = r_data;
-                clk_counter = ntt_counter;
+                clk_counter = ntt_counter+1;
             end
             else begin
                 temp_stage = START;
@@ -131,11 +132,11 @@ always @(*)begin
         PROCESSING: begin
             clk_counter = ntt_counter + 1;
             case(mode)
-            `NTT, `INVNTT: begin
-                temp_stage = ntt_counter == 8'd228 ? FINISH : PROCESSING;
-                w_data_en = ntt_counter > 8'd197;
+            `NTT, `INTT: begin
+                temp_stage = ntt_counter == 8'd229 ? FINISH : PROCESSING;
+                w_data_en = ntt_counter > 8'd198;
                 w_addr_reg = w_data_addr_offset + w_addr;
-                if(ntt_counter[7:5] == 3'b0)begin
+                if(ntt_counter < 8'd33)begin
                     in_data_reg = r_data;
                 end
                 else begin
@@ -144,10 +145,10 @@ always @(*)begin
                 r_addr_reg = ntt_counter[7:5] == 0? r_start_offset_A + r_addr : 0;
             end
             `MULT: begin
-                temp_stage = ntt_counter == 8'd138 ? FINISH : PROCESSING;
-                w_data_en = ntt_counter > 8'd107;
+                temp_stage = ntt_counter == 8'd139 ? FINISH : PROCESSING;
+                w_data_en = ntt_counter > 8'd108;
                 in_data_reg = r_data;
-                w_addr_reg = w_data_addr_offset + (ntt_counter - 8'd108);
+                w_addr_reg = w_data_addr_offset + (ntt_counter - 8'd109);
                 if (ntt_counter[0] == 0)begin
                     r_addr_reg = r_start_offset_A + ntt_counter[7:2];
                 end
@@ -156,10 +157,10 @@ always @(*)begin
                 end
             end
             `ADDSUB:begin
-                temp_stage = ntt_counter == 8'd66 ? FINISH : PROCESSING;
-                w_data_en = ntt_counter > 8'd35;
+                temp_stage = ntt_counter == 8'd67 ? FINISH : PROCESSING;
+                w_data_en = ntt_counter > 8'd36;
                 in_data_reg = r_data;
-                w_addr_reg = w_data_addr_offset + (ntt_counter - 8'd36);
+                w_addr_reg = w_data_addr_offset + (ntt_counter - 8'd37);
                 if (ntt_counter[0] == 0)begin
                     r_addr_reg = r_start_offset_A + ntt_counter[7:1];
                 end
@@ -187,6 +188,6 @@ always @(*)begin
         end
     endcase
 end
-assign r_addr_wire = mode == `MULT | mode == `ADDSUB? w_addr_reg : r_addr;
+assign r_addr_wire = mode == `MULT | mode == `ADDSUB? w_addr_reg+1 : r_addr;
 assign w_data = mode == `MULT | mode == `ADDSUB? (stage == FINISH ? but_result : ROM_r_data) : but_result;
 endmodule

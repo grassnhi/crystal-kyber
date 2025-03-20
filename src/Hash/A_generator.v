@@ -1,4 +1,4 @@
-`include "../Hash/SHAKE_128.v"
+//`include "../Hash/SHAKE_128.v"
 //Parse
 module A_generator(  input [0:272-1] M, //256+8+8
                     input [7:0] ram_w_start_offset, 

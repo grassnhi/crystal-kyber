@@ -256,7 +256,7 @@ always @(posedge clk or posedge rst) begin
                     ram_raddr <= ram_0_offset + cnt - 7'd65;
                     t_c_reg_v_in[cnt-68] <= comp_out_d4;
                 end
-                last_cycle <= #0.1 cnt == 7'd98;
+                last_cycle <= #0.1 cnt == 7'd99;
             end
             Dec_decode_sk: begin
                 ram_wen <= 1'b1;

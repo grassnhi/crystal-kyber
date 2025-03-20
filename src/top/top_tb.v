@@ -104,7 +104,7 @@ initial begin
         $display("Pass");
     else
         $display("Fail");
-    #10 
+    #10
     
     $display("------------------------------------Enc------------------------------------");
     mode = 1; // Enc
