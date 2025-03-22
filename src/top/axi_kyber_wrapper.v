@@ -1,5 +1,4 @@
 `timescale 1ns / 1ps
-`include "top.v"
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -74,10 +73,10 @@ module axi_kyber_wrapper(
     parameter ram_skin_offset = 8'd54;
     parameter ram_c_in_offset = 8'd102;
 
-    parameter ram_pkout_offset = 8'd128;
-    parameter ram_skout_offset = 8'd178;
-    parameter ram_c_out_offset = 8'd226;
-    parameter ram_m_out_offset = 8'd228;
+    parameter ram_pkout_offset = 8'd150;
+    parameter ram_skout_offset = 8'd200;
+    parameter ram_m_out_offset = 8'd248;
+    parameter ram_c_out_offset = 8'd250;
 
     parameter reg_strart_offset = 8'd0;
     parameter reg_finish_offset = 8'd1;
@@ -103,8 +102,9 @@ module axi_kyber_wrapper(
     wire [6143:0] c_out;
     wire [255:0] m_out;
        
-    wire start_kyber;      
-    wire finish;   
+    wire start_kyber;   
+    wire finish_kyber;   
+    wire finish;
     
     wire bram_clk_a;
     wire bram_rst_a;
@@ -126,6 +126,8 @@ module axi_kyber_wrapper(
   
     reg read_done, write_done;
     reg [6:0] cnt;
+
+    // reg start_rg_pl;
     
     // AXI-BRAM Controller Instance
     axi_ctrl_wrapper axi_ctrl_wrapper_i (
@@ -173,13 +175,14 @@ module axi_kyber_wrapper(
         .bram_wrdata_a_0(bram_wrdata_a)
     );
 
+    // 1 = ram, 0 = registers
     assign ram_select = bram_addr_a[16] & bram_en_a;
     assign reg_select = ~bram_addr_a[16] & bram_en_a;
       
   
     kyber_bram_wrapper bram_inst (
         // BRAM - AXI
-        .addra_0(bram_addr_a[7:0]),
+        .addra_0(bram_addr_a[11:4]),
         .clka_0(bram_clk_a),
         .dina_0(bram_wrdata_a),
         .douta_0(bram_rddata),
@@ -196,43 +199,32 @@ module axi_kyber_wrapper(
 
     // AXI WRITE REG
     always @(posedge bram_clk_a or posedge bram_rst_a) begin
-        if(bram_rst_a) begin
+        if (bram_rst_a) begin
             start_reg <= 128'b0;
-            mode_reg <= 128'b0;
-        end else if (reg_select & bram_we_a) begin 
-            case (bram_addr_a[2:0])
-                3'd0: begin 
-                    start_reg <= s_axi_wdata;
-                    mode_reg <= mode_reg;
-                end
-                3'd2: begin
-                    mode_reg <= s_axi_wdata;
-                    start_reg <= start_reg;
-                end                    
-                default: begin
-                    mode_reg <= s_axi_wdata;
-                    start_reg <= start_reg;                
-                end
-            endcase // need 1 cycle to write
+            mode_reg  <= 128'b0;
+        end else if (reg_select & (&bram_we_a)) begin
+            case (bram_addr_a[11:4])
+                8'd0: start_reg <= bram_wrdata_a;
+                8'd2: mode_reg  <= bram_wrdata_a;
+            endcase
         end else if (current_state != IDLE) begin
-            start_reg <= 128'b0;
-            mode_reg <= mode_reg;
+            start_reg[0] <= 1'b0;
         end
     end
-    
+
     // AXI READ REG
     always @(posedge bram_clk_a or posedge bram_rst_a) begin
         if(bram_rst_a) begin
             reg_rddata_a <= 128'b0;
         end else begin
-            if (reg_select & bram_we_a) begin 
-                case (bram_addr_a[1:0]) 
+            if (reg_select & (~(&bram_we_a))) begin 
+                case (bram_addr_a[5:4]) 
                     2'd0: reg_rddata_a <= start_reg;             // Read `start_reg`
                     2'd1: reg_rddata_a <= finish_reg;            // Read `finish_reg`
                     2'd2: reg_rddata_a <= mode_reg;              // Read `mode_reg`
                     default: reg_rddata_a <= 128'b0;
                 endcase
-            end else reg_rddata_a <= 128'b0;
+            end
         end
     end
 
@@ -245,6 +237,16 @@ module axi_kyber_wrapper(
             end else bram_rddata_a <= bram_rddata;
         end
     end
+
+    // always @(posedge bram_clk_a or posedge bram_rst_a) begin
+    //     if (bram_rst_a) begin
+    //         start_rg_pl <= 1'b0;
+    //         start_kyber <= 1'b0;
+    //     end else begin
+    //         start_rg_pl <= start_reg[0];
+    //         start_kyber <= (~start_rg_pl) & start_reg[0]; // Both current & previous high
+    //     end
+    // end
     
     // FSM Logic
     always @(posedge bram_clk_a or posedge bram_rst_a) begin
@@ -291,8 +293,8 @@ module axi_kyber_wrapper(
             cnt <= 0;
         end else begin
             if(current_state == IDLE || current_state == PROCESS)
-                cnt <= cnt + 7'd1;
-            else cnt <= 0;
+                cnt <= 0;
+            else cnt <= cnt + 7'd1;
         end
     end
     
@@ -307,39 +309,40 @@ module axi_kyber_wrapper(
             c_in <= 0;
             sk_in <= 0;
             pk_in <= 0;
+            random_coin <= 0;
         end else begin
-            m_in <= m_in;
-            c_in <= c_in;
-            sk_in <= sk_in;
-            pk_in <= pk_in;
+            // m_in <= m_in;
+            // c_in <= c_in;
+            // sk_in <= sk_in;
+            // pk_in <= pk_in;
             case (current_state)
                 READ: begin
-                    if (mode_reg[1:0] == 1 && start_reg[1] == 1) begin
+                    if (mode_reg[1:0] == 2'b1 && start_reg[1] == 1'b1) begin
                         kyber_bram_addr <= ram_pkin_offset + cnt;
                         kyber_bram_enb <= 1'b1;
                         kyber_bram_web <= 1'b0;
-                        pk_in[128*cnt +: 128] <= kyber_bram_rddata;
-                        if(cnt == 7'd50) begin
-                            sk_in[128*(cnt-7'd50) +: 128] = kyber_bram_rddata;
-                        end else if(cnt == 7'd52) begin
-                            c_in[128*(cnt-7'd52) +: 128] <= kyber_bram_rddata;
-                        end
+                        pk_in[128*(cnt-2) +: 128] <= kyber_bram_rddata;
+                        // if(cnt >= 7'd50) begin
+                            m_in[128*(cnt-7'd52) +: 128] <= kyber_bram_rddata;
+                        // end else if(cnt >= 7'd52) begin
+                            random_coin[128*(cnt-7'd54) +: 128] <= kyber_bram_rddata;
+                        // end
                         read_done <= (cnt == 7'd54);
                     end if (mode_reg[1:0] == 1 && start_reg[1] == 0) begin
                         kyber_bram_addr <= ram_m_in_offset + cnt;
                         kyber_bram_enb <= 1'b1;
                         kyber_bram_web <= 1'b0;
-                        m_in[128*cnt +: 128] = kyber_bram_rddata;
+                        m_in[128*(cnt-2) +: 128] = kyber_bram_rddata;
                         read_done <= (cnt == 7'd2);
                     end else if (mode_reg[1:0] == 2) begin
                         kyber_bram_addr <= ram_skin_offset + cnt;
                         kyber_bram_enb <= 1'b1;
                         kyber_bram_web <= 1'b0;
-                        sk_in[128*cnt +: 128] <= kyber_bram_rddata;
-                        if(cnt == 7'd48) begin
-                            c_in[128*(cnt-7'd48) +: 128] = kyber_bram_rddata;
+                        sk_in[128*(cnt-2) +: 128] <= kyber_bram_rddata;
+                        if(cnt >= 7'd48) begin
+                            c_in[128*(cnt-7'd50) +: 128] = kyber_bram_rddata;
                         end
-                        read_done <= (cnt == 7'd50);
+                        read_done <= (cnt == 7'd96);
                     end
                 end
                 WRITE: begin
@@ -348,22 +351,22 @@ module axi_kyber_wrapper(
                         kyber_bram_enb <= 1'b1;
                         kyber_bram_web <= 1'b1;
                         kyber_bram_wrdata <= pk_out[128*cnt +: 128];
-                        if(cnt == 7'd50) begin
+                        if(cnt >= 7'd50) begin
                             kyber_bram_wrdata <= sk_out[128*(cnt-7'd50) +: 128];
                         end
-                        read_done <= (cnt == 7'd98);
+                        write_done <= (cnt == 7'd98);
                     end else if (mode_reg[1:0] == 1) begin
                         kyber_bram_addr <= ram_c_out_offset + cnt;
                         kyber_bram_enb <= 1'b1;
                         kyber_bram_web <= 1'b1;
                         kyber_bram_wrdata <= c_out[128*cnt +: 128];
-                        read_done <= (cnt == 7'd2);
+                        write_done <= (cnt == 7'd48);
                     end else if (mode_reg[1:0] == 2) begin
                         kyber_bram_addr <= ram_m_out_offset + cnt;
                         kyber_bram_enb <= 1'b1;
                         kyber_bram_web <= 1'b1;
                         kyber_bram_wrdata <= m_out[128*cnt +: 128];
-                        read_done <= (cnt == 7'd2);
+                        write_done <= (cnt == 7'd2);
                     end
                 end
                 default: begin
@@ -376,6 +379,9 @@ module axi_kyber_wrapper(
             endcase
         end
     end
+
+    assign start_kyber = (start_reg[0] && (mode_reg[1:0] == 0)) || (read_done && mode_reg[1:0] == 1)|| (read_done && mode_reg[1:0] == 2);
+    assign finish = (current_state == WRITE);
 
     top u_kyber (
         .clk         (bram_clk_a),
