@@ -28,7 +28,7 @@ wire        rsta_1;
 wire [3:0]  wea_1;
 
 // BRAM 2 Port A
-wire [14:0] addra_2;
+wire [12:0] addra_2;
 wire        clka_2;
 wire [31:0] dina_2;
 wire [31:0] douta_2;
@@ -113,7 +113,7 @@ blk_mem_gen_0 blk_mem_gen_0_inst_1 (
 
 // Instance 2: kyber_wrapper
 kyber_wrapper kyber(
-    .reg_addr(addra_2[14:2]),
+    .reg_addr(addra_2[12:2]),
     .reg_clk(clka_2),
     .reg_en(ena_2),
     .reg_rddata(douta_2),

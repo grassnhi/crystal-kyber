@@ -21,7 +21,7 @@
 
 
 module kyber_wrapper(
-    input wire [12:0]reg_addr,
+    input wire [10:0]reg_addr,
     input wire reg_clk,
     input wire reg_en,
     output wire [31:0]reg_rddata,
@@ -92,6 +92,7 @@ module kyber_wrapper(
     wire rst;
     reg restart;
     
+    wire restart_kyber;
 //    wire [31:0]internal_wrdata;
     wire [127:0]internal_rddata;
     
@@ -268,8 +269,8 @@ module kyber_wrapper(
         end
     end
 
-    assign start_kyber = read_done;
-    
+    assign start_kyber = read_done & ~restart;
+    assign restart_kyber = read_done & restart;
     
     reg [15:0] kb_br_we;
     reg kb_br_en;
@@ -285,6 +286,11 @@ module kyber_wrapper(
             end
         end
     end
+    wire kyber_pause;
+    wire [4:0] kyber_pause_state;
+    wire [8:0] kyber_bram_addr;
+    wire [95:0] kyber_bram_data;
+    wire [4:0] state;
     cs_register u_csa (
         .clk(reg_clk),
         .rst(reg_rst),
@@ -293,8 +299,10 @@ module kyber_wrapper(
         .we(reg_we),
         .wrdata(reg_wrdata),
         .rddata(reg_rddata),
+        .state(state),
         .current_state(current_state),
-        .cnt(cnt),
+        .kyber_bram(kyber_bram_data),
+//        .cnt(cnt),
         .pk_out_reg(pk_out_reg),
         .sk_out_reg(sk_out_reg),
         .c_out_reg(c_out_reg),
@@ -308,17 +316,34 @@ module kyber_wrapper(
         .start_pulse(start_pulse),
         .restart_pulse(restart_pulse),
         .rst_pulse(rst_pulse),
-        .mode(mode)
+        .mode(mode),
+        .pause(kyber_pause),
+        .pause_state(kyber_pause_state),
+        .kyber_bram_addr(kyber_bram_addr)
     );
     
+//    ILA_wrapper debugger
+//   (.clk_0(reg_clk),
+//    .probe0_0(reg_clk),
+//    .probe1_0(start_kyber),
+//    .probe2_0(mode),
+//    .probe3_0(state),
+//    .probe4_0(random_coin),
+//    .probe5_0(finish_kyber));
+    
 	kyber u_kyber(
-		.clk(clk),
+		.clk(reg_clk),
 		.rst(rst),
-		.start(start),
-		.restart(restart),
+		.start(start_kyber),
+		.restart(restart_kyber),
 		.mode(mode),
 		.random_coin(random_coin),
-
+        //input for debug signal
+        .pause(kyber_pause),
+        .pause_state(kyber_pause_state),
+        .bram_addr(kyber_bram_addr),
+        .kyber_bram(kyber_bram_data),
+        
 		.m_in(m_in),
 		.pk_in(pk_in),// 12*256*2 + 256
 		.sk_in(sk_in),// 12*256*2
@@ -330,7 +355,7 @@ module kyber_wrapper(
 		.c_out(c_out), // 10*256*2 + 4*256
 		.state(state),
 		
-		.finish(finish)
+		.finish(finish_kyber)
 	);
 
     

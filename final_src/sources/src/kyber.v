@@ -11,7 +11,12 @@ module kyber(
     input [6399:0]pk_in,// 12*256*2 + 256
     input [6143:0]sk_in,// 12*256*2
     input [6143:0]c_in, // 10*256*2 + 4*256
-
+    
+    input pause,
+    input [4:0] pause_state,
+    input [8:0] bram_addr,
+    output [95:0] kyber_bram,
+    
     output [4:0] state,
     output [255:0] m_out,
     output [6399:0]pk_out,// 12*256*2 + 256
@@ -41,8 +46,6 @@ wire coder_active, coder_load_input_Enc, coder_load_input_Dec;
 wire [3:0] coder_mode;
 
 wire CBD_in_sel, rho_sel;
-wire ram_r_sel;
-wire [1:0] ram_w_sel;
 
 //G
 wire [255:0] G_rho, G_sigma;
@@ -79,7 +82,6 @@ reg [95:0] ram_wdata_1, ram_wdata_2;
 wire [95:0] ram_rdata_2, ram_rdata_1;
 reg ram_wen_1, ram_wen_2;
 wire change_mode;
-wire port_b_select;
 assign change_mode = coder_finish | ntt_finish | A_finish | CBD_finish | G_finish;
 controller control(
     .clk(clk),
@@ -90,7 +92,10 @@ controller control(
     .change_signal(change_mode),
     .state(state),
     .finish(finish),
-
+    
+    .pause(pause),
+    .pause_state(pause_state),
+    
     .ntt_start(ntt_start),
     .ntt_mode(ntt_mode),
     .ntt_is_add_or_sub(ntt_is_add_or_sub),
@@ -225,6 +230,7 @@ always@(*)begin
         end
     endcase
 end
+assign kyber_bram = pause ? ram_rdata_1 : 0;
 always @(*) begin
     if(CBD_wen)begin
         ram_addr_1 = CBD_waddr;
@@ -238,9 +244,17 @@ always @(*) begin
             ram_wdata_1 = ntt_wdata;
         end
         else begin
-            ram_addr_1 = ntt_raddr;
-            ram_wen_1 = 0;
-            ram_wdata_1 = ntt_wdata;
+            if(pause)begin
+                ram_addr_1 = bram_addr;
+                ram_wen_1 = 0;
+                ram_wdata_1 = ntt_wdata;
+            end
+            else begin
+                ram_addr_1 = ntt_raddr;
+                ram_wen_1 = 0;
+                ram_wdata_1 = ntt_wdata;
+            end
+            
         end
     end
     coder_rdata = ram_rdata_2;

@@ -7,7 +7,8 @@ module controller (
     input [1:0] mode, // 0:KeyGen, 1:Enc, 2:Dec
     output [4:0] state,
     output reg finish,
-
+    input pause,
+    input [4:0] pause_state,
     output ntt_start,
     output reg [1:0] ntt_mode,
     output ntt_is_add_or_sub,
@@ -184,12 +185,17 @@ always @(*) begin
             else begin
                 temp_global_state = global_state;
             end
+            if(pause)begin
+                temp_stage = (global_state == pause_state) ? FINISH : PROCESS;
+            end
+            else begin
             case(mode)
                 KeyGen:   temp_stage = (global_state == 5'd23) ? FINISH : PROCESS;
                 Enc:      temp_stage = (global_state == 5'd31) ? FINISH : PROCESS;
                 Dec:      temp_stage = (global_state == 5'd11)  ? FINISH : PROCESS;
                 default:  temp_stage = START;
             endcase
+            end
         end
         FINISH: begin
             temp_restart_mode = 0;
