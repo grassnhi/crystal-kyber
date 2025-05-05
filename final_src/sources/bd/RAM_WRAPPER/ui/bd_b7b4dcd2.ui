@@ -1,0 +1,37 @@
+{
+   "ActiveEmotionalView":"Default View",
+   "Default View_ScaleFactor":"1.1738",
+   "Default View_TopLeft":"-343,-217",
+   "ExpandedHierarchyInLayout":"",
+   "guistr":"# # String gsaved with Nlview 7.8.0 2024-04-26 e1825d835c VDI=44 GEI=38 GUI=JA:21.0
+#  -string -flagsOSRD
+preplace port port-id_clka_0 -pg 1 -lvl 0 -x -30 -y -140 -defaultsOSRD
+preplace port port-id_clkb_0 -pg 1 -lvl 0 -x -30 -y 40 -defaultsOSRD
+preplace port port-id_ena_0 -pg 1 -lvl 0 -x -30 -y -50 -defaultsOSRD
+preplace port port-id_enb_0 -pg 1 -lvl 0 -x -30 -y 100 -defaultsOSRD
+preplace portBus addra_0 -pg 1 -lvl 0 -x -30 -y -80 -defaultsOSRD
+preplace portBus addrb_0 -pg 1 -lvl 0 -x -30 -y 10 -defaultsOSRD
+preplace portBus dina_0 -pg 1 -lvl 0 -x -30 -y -110 -defaultsOSRD
+preplace portBus dinb_0 -pg 1 -lvl 0 -x -30 -y 70 -defaultsOSRD
+preplace portBus douta_0 -pg 1 -lvl 2 -x 240 -y 160 -defaultsOSRD
+preplace portBus doutb_0 -pg 1 -lvl 2 -x 240 -y 130 -defaultsOSRD
+preplace portBus wea_0 -pg 1 -lvl 0 -x -30 -y -20 -defaultsOSRD
+preplace portBus web_0 -pg 1 -lvl 0 -x -30 -y 130 -defaultsOSRD
+preplace inst blk_mem_gen_0 -pg 1 -lvl 1 -x 120 -y -30 -defaultsOSRD
+preplace netloc addra_0_1 1 0 1 0 -140n
+preplace netloc addrb_0_1 1 0 1 -10J 0n
+preplace netloc clka_0_1 1 0 1 -10J -140n
+preplace netloc clkb_0_1 1 0 1 -10J 20n
+preplace netloc dina_0_1 1 0 1 20J -110n
+preplace netloc dinb_0_1 1 0 1 0J 40n
+preplace netloc blk_mem_gen_0_douta 1 0 2 20 160 NJ
+preplace netloc blk_mem_gen_0_doutb 1 0 2 -10 170 220J
+preplace netloc ena_0_1 1 0 1 -10J -60n
+preplace netloc enb_0_1 1 0 1 0J 80n
+preplace netloc wea_0_1 1 0 1 -10J -40n
+preplace netloc web_0_1 1 0 1 10J 100n
+levelinfo -pg 1 -30 120 240
+pagesize -pg 1 -db -bbox -sgen -160 -220 380 180
+"
+}
+

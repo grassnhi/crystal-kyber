@@ -1,0 +1,537 @@
+{
+  "design": {
+    "design_info": {
+      "boundary_crc": "0x7798F9E667DAF488",
+      "device": "xczu7ev-ffvc1156-2-e",
+      "gen_directory": "../../../../wrapper.gen/sources_1/bd/bram_ctrl",
+      "name": "bram_ctrl",
+      "rev_ctrl_bd_flag": "RevCtrlBdOff",
+      "synth_flow_mode": "Hierarchical",
+      "tool_version": "2024.2",
+      "validated": "true"
+    },
+    "design_tree": {
+      "axi_bram_ctrl_0": "",
+      "blk_mem_gen_0": ""
+    },
+    "ports": {
+      "addrb_0": {
+        "direction": "I",
+        "left": "7",
+        "right": "0"
+      },
+      "clkb_0": {
+        "type": "clk",
+        "direction": "I",
+        "parameters": {
+          "CLK_DOMAIN": {
+            "value": "bram_ctrl_clkb_0",
+            "value_src": "default"
+          },
+          "FREQ_HZ": {
+            "value": "100000000",
+            "value_src": "default"
+          },
+          "FREQ_TOLERANCE_HZ": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.0",
+            "value_src": "default"
+          }
+        }
+      },
+      "dinb_0": {
+        "direction": "I",
+        "left": "127",
+        "right": "0"
+      },
+      "doutb_0": {
+        "direction": "O",
+        "left": "127",
+        "right": "0"
+      },
+      "enb_0": {
+        "direction": "I"
+      },
+      "web_0": {
+        "direction": "I",
+        "left": "15",
+        "right": "0"
+      },
+      "s_axi_aclk_0": {
+        "type": "clk",
+        "direction": "I",
+        "parameters": {
+          "ASSOCIATED_RESET": {
+            "value": "s_axi_aresetn_0",
+            "value_src": "default"
+          },
+          "CLK_DOMAIN": {
+            "value": "bram_ctrl_s_axi_aclk_0",
+            "value_src": "default"
+          },
+          "FREQ_HZ": {
+            "value": "100000000",
+            "value_src": "default"
+          },
+          "FREQ_TOLERANCE_HZ": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.0",
+            "value_src": "default"
+          }
+        }
+      },
+      "s_axi_araddr_0": {
+        "direction": "I",
+        "left": "16",
+        "right": "0"
+      },
+      "s_axi_arburst_0": {
+        "direction": "I",
+        "left": "1",
+        "right": "0"
+      },
+      "s_axi_arcache_0": {
+        "direction": "I",
+        "left": "3",
+        "right": "0"
+      },
+      "s_axi_aresetn_0": {
+        "type": "rst",
+        "direction": "I",
+        "parameters": {
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "POLARITY": {
+            "value": "ACTIVE_LOW",
+            "value_src": "default"
+          }
+        }
+      },
+      "s_axi_arlen_0": {
+        "direction": "I",
+        "left": "7",
+        "right": "0"
+      },
+      "s_axi_arlock_0": {
+        "direction": "I"
+      },
+      "s_axi_arprot_0": {
+        "direction": "I",
+        "left": "2",
+        "right": "0"
+      },
+      "s_axi_arready_0": {
+        "direction": "O"
+      },
+      "s_axi_arsize_0": {
+        "direction": "I",
+        "left": "2",
+        "right": "0"
+      },
+      "s_axi_arvalid_0": {
+        "direction": "I"
+      },
+      "s_axi_awaddr_0": {
+        "direction": "I",
+        "left": "16",
+        "right": "0"
+      },
+      "s_axi_awburst_0": {
+        "direction": "I",
+        "left": "1",
+        "right": "0"
+      },
+      "s_axi_awcache_0": {
+        "direction": "I",
+        "left": "3",
+        "right": "0"
+      },
+      "s_axi_awlen_0": {
+        "direction": "I",
+        "left": "7",
+        "right": "0"
+      },
+      "s_axi_awlock_0": {
+        "direction": "I"
+      },
+      "s_axi_awprot_0": {
+        "direction": "I",
+        "left": "2",
+        "right": "0"
+      },
+      "s_axi_awready_0": {
+        "direction": "O"
+      },
+      "s_axi_awsize_0": {
+        "direction": "I",
+        "left": "2",
+        "right": "0"
+      },
+      "s_axi_awvalid_0": {
+        "direction": "I"
+      },
+      "s_axi_bready_0": {
+        "direction": "I"
+      },
+      "s_axi_bresp_0": {
+        "direction": "O",
+        "left": "1",
+        "right": "0"
+      },
+      "s_axi_bvalid_0": {
+        "direction": "O"
+      },
+      "s_axi_rdata_0": {
+        "direction": "O",
+        "left": "127",
+        "right": "0"
+      },
+      "s_axi_rlast_0": {
+        "direction": "O"
+      },
+      "s_axi_rready_0": {
+        "direction": "I"
+      },
+      "s_axi_rresp_0": {
+        "direction": "O",
+        "left": "1",
+        "right": "0"
+      },
+      "s_axi_rvalid_0": {
+        "direction": "O"
+      },
+      "s_axi_wdata_0": {
+        "direction": "I",
+        "left": "127",
+        "right": "0"
+      },
+      "s_axi_wlast_0": {
+        "direction": "I"
+      },
+      "s_axi_wready_0": {
+        "direction": "O"
+      },
+      "s_axi_wstrb_0": {
+        "direction": "I",
+        "left": "15",
+        "right": "0"
+      },
+      "s_axi_wvalid_0": {
+        "direction": "I"
+      }
+    },
+    "components": {
+      "axi_bram_ctrl_0": {
+        "vlnv": "xilinx.com:ip:axi_bram_ctrl:4.1",
+        "ip_revision": "11",
+        "xci_name": "bram_ctrl_axi_bram_ctrl_0_0",
+        "xci_path": "ip\\bram_ctrl_axi_bram_ctrl_0_0\\bram_ctrl_axi_bram_ctrl_0_0.xci",
+        "inst_hier_path": "axi_bram_ctrl_0",
+        "parameters": {
+          "DATA_WIDTH": {
+            "value": "128"
+          },
+          "SINGLE_PORT_BRAM": {
+            "value": "1"
+          }
+        }
+      },
+      "blk_mem_gen_0": {
+        "vlnv": "xilinx.com:ip:blk_mem_gen:8.4",
+        "ip_revision": "9",
+        "xci_name": "bram_ctrl_blk_mem_gen_0_0",
+        "xci_path": "ip\\bram_ctrl_blk_mem_gen_0_0\\bram_ctrl_blk_mem_gen_0_0.xci",
+        "inst_hier_path": "blk_mem_gen_0",
+        "parameters": {
+          "Byte_Size": {
+            "value": "8"
+          },
+          "Enable_32bit_Address": {
+            "value": "false"
+          },
+          "Memory_Type": {
+            "value": "True_Dual_Port_RAM"
+          },
+          "Register_PortA_Output_of_Memory_Primitives": {
+            "value": "false"
+          },
+          "Register_PortB_Output_of_Memory_Primitives": {
+            "value": "false"
+          },
+          "Use_Byte_Write_Enable": {
+            "value": "true"
+          },
+          "Write_Depth_A": {
+            "value": "256"
+          },
+          "Write_Width_A": {
+            "value": "128"
+          },
+          "use_bram_block": {
+            "value": "Stand_Alone"
+          }
+        }
+      }
+    },
+    "interface_nets": {
+      "axi_bram_ctrl_0_BRAM_PORTA": {
+        "interface_ports": [
+          "blk_mem_gen_0/BRAM_PORTA",
+          "axi_bram_ctrl_0/BRAM_PORTA"
+        ]
+      }
+    },
+    "nets": {
+      "addrb_0_1": {
+        "ports": [
+          "addrb_0",
+          "blk_mem_gen_0/addrb"
+        ]
+      },
+      "axi_bram_ctrl_0_s_axi_arready": {
+        "ports": [
+          "axi_bram_ctrl_0/s_axi_arready",
+          "s_axi_arready_0"
+        ]
+      },
+      "axi_bram_ctrl_0_s_axi_awready": {
+        "ports": [
+          "axi_bram_ctrl_0/s_axi_awready",
+          "s_axi_awready_0"
+        ]
+      },
+      "axi_bram_ctrl_0_s_axi_bresp": {
+        "ports": [
+          "axi_bram_ctrl_0/s_axi_bresp",
+          "s_axi_bresp_0"
+        ]
+      },
+      "axi_bram_ctrl_0_s_axi_bvalid": {
+        "ports": [
+          "axi_bram_ctrl_0/s_axi_bvalid",
+          "s_axi_bvalid_0"
+        ]
+      },
+      "axi_bram_ctrl_0_s_axi_rdata": {
+        "ports": [
+          "axi_bram_ctrl_0/s_axi_rdata",
+          "s_axi_rdata_0"
+        ]
+      },
+      "axi_bram_ctrl_0_s_axi_rlast": {
+        "ports": [
+          "axi_bram_ctrl_0/s_axi_rlast",
+          "s_axi_rlast_0"
+        ]
+      },
+      "axi_bram_ctrl_0_s_axi_rresp": {
+        "ports": [
+          "axi_bram_ctrl_0/s_axi_rresp",
+          "s_axi_rresp_0"
+        ]
+      },
+      "axi_bram_ctrl_0_s_axi_rvalid": {
+        "ports": [
+          "axi_bram_ctrl_0/s_axi_rvalid",
+          "s_axi_rvalid_0"
+        ]
+      },
+      "axi_bram_ctrl_0_s_axi_wready": {
+        "ports": [
+          "axi_bram_ctrl_0/s_axi_wready",
+          "s_axi_wready_0"
+        ]
+      },
+      "blk_mem_gen_0_doutb": {
+        "ports": [
+          "blk_mem_gen_0/doutb",
+          "doutb_0"
+        ]
+      },
+      "clkb_0_1": {
+        "ports": [
+          "clkb_0",
+          "blk_mem_gen_0/clkb"
+        ]
+      },
+      "dinb_0_1": {
+        "ports": [
+          "dinb_0",
+          "blk_mem_gen_0/dinb"
+        ]
+      },
+      "enb_0_1": {
+        "ports": [
+          "enb_0",
+          "blk_mem_gen_0/enb"
+        ]
+      },
+      "s_axi_aclk_0_1": {
+        "ports": [
+          "s_axi_aclk_0",
+          "axi_bram_ctrl_0/s_axi_aclk"
+        ]
+      },
+      "s_axi_araddr_0_1": {
+        "ports": [
+          "s_axi_araddr_0",
+          "axi_bram_ctrl_0/s_axi_araddr"
+        ]
+      },
+      "s_axi_arburst_0_1": {
+        "ports": [
+          "s_axi_arburst_0",
+          "axi_bram_ctrl_0/s_axi_arburst"
+        ]
+      },
+      "s_axi_arcache_0_1": {
+        "ports": [
+          "s_axi_arcache_0",
+          "axi_bram_ctrl_0/s_axi_arcache"
+        ]
+      },
+      "s_axi_aresetn_0_1": {
+        "ports": [
+          "s_axi_aresetn_0",
+          "axi_bram_ctrl_0/s_axi_aresetn"
+        ]
+      },
+      "s_axi_arlen_0_1": {
+        "ports": [
+          "s_axi_arlen_0",
+          "axi_bram_ctrl_0/s_axi_arlen"
+        ]
+      },
+      "s_axi_arlock_0_1": {
+        "ports": [
+          "s_axi_arlock_0",
+          "axi_bram_ctrl_0/s_axi_arlock"
+        ]
+      },
+      "s_axi_arprot_0_1": {
+        "ports": [
+          "s_axi_arprot_0",
+          "axi_bram_ctrl_0/s_axi_arprot"
+        ]
+      },
+      "s_axi_arsize_0_1": {
+        "ports": [
+          "s_axi_arsize_0",
+          "axi_bram_ctrl_0/s_axi_arsize"
+        ]
+      },
+      "s_axi_arvalid_0_1": {
+        "ports": [
+          "s_axi_arvalid_0",
+          "axi_bram_ctrl_0/s_axi_arvalid"
+        ]
+      },
+      "s_axi_awaddr_0_1": {
+        "ports": [
+          "s_axi_awaddr_0",
+          "axi_bram_ctrl_0/s_axi_awaddr"
+        ]
+      },
+      "s_axi_awburst_0_1": {
+        "ports": [
+          "s_axi_awburst_0",
+          "axi_bram_ctrl_0/s_axi_awburst"
+        ]
+      },
+      "s_axi_awcache_0_1": {
+        "ports": [
+          "s_axi_awcache_0",
+          "axi_bram_ctrl_0/s_axi_awcache"
+        ]
+      },
+      "s_axi_awlen_0_1": {
+        "ports": [
+          "s_axi_awlen_0",
+          "axi_bram_ctrl_0/s_axi_awlen"
+        ]
+      },
+      "s_axi_awlock_0_1": {
+        "ports": [
+          "s_axi_awlock_0",
+          "axi_bram_ctrl_0/s_axi_awlock"
+        ]
+      },
+      "s_axi_awprot_0_1": {
+        "ports": [
+          "s_axi_awprot_0",
+          "axi_bram_ctrl_0/s_axi_awprot"
+        ]
+      },
+      "s_axi_awsize_0_1": {
+        "ports": [
+          "s_axi_awsize_0",
+          "axi_bram_ctrl_0/s_axi_awsize"
+        ]
+      },
+      "s_axi_awvalid_0_1": {
+        "ports": [
+          "s_axi_awvalid_0",
+          "axi_bram_ctrl_0/s_axi_awvalid"
+        ]
+      },
+      "s_axi_bready_0_1": {
+        "ports": [
+          "s_axi_bready_0",
+          "axi_bram_ctrl_0/s_axi_bready"
+        ]
+      },
+      "s_axi_rready_0_1": {
+        "ports": [
+          "s_axi_rready_0",
+          "axi_bram_ctrl_0/s_axi_rready"
+        ]
+      },
+      "s_axi_wdata_0_1": {
+        "ports": [
+          "s_axi_wdata_0",
+          "axi_bram_ctrl_0/s_axi_wdata"
+        ]
+      },
+      "s_axi_wlast_0_1": {
+        "ports": [
+          "s_axi_wlast_0",
+          "axi_bram_ctrl_0/s_axi_wlast"
+        ]
+      },
+      "s_axi_wstrb_0_1": {
+        "ports": [
+          "s_axi_wstrb_0",
+          "axi_bram_ctrl_0/s_axi_wstrb"
+        ]
+      },
+      "s_axi_wvalid_0_1": {
+        "ports": [
+          "s_axi_wvalid_0",
+          "axi_bram_ctrl_0/s_axi_wvalid"
+        ]
+      },
+      "web_0_1": {
+        "ports": [
+          "web_0",
+          "blk_mem_gen_0/web"
+        ]
+      }
+    }
+  }
+}

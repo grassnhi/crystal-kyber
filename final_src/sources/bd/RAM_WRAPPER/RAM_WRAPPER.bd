@@ -1,0 +1,217 @@
+{
+  "design": {
+    "design_info": {
+      "boundary_crc": "0x31714AD44A231485",
+      "device": "xczu7ev-ffvc1156-2-e",
+      "gen_directory": "../../../../zcu_v3.gen/sources_1/bd/RAM_WRAPPER",
+      "name": "RAM_WRAPPER",
+      "rev_ctrl_bd_flag": "RevCtrlBdOff",
+      "synth_flow_mode": "Hierarchical",
+      "tool_version": "2024.2",
+      "validated": "true"
+    },
+    "design_tree": {
+      "blk_mem_gen_0": ""
+    },
+    "ports": {
+      "addra_0": {
+        "direction": "I",
+        "left": "8",
+        "right": "0"
+      },
+      "addrb_0": {
+        "direction": "I",
+        "left": "8",
+        "right": "0"
+      },
+      "clka_0": {
+        "type": "clk",
+        "direction": "I",
+        "parameters": {
+          "CLK_DOMAIN": {
+            "value": "RAM_WRAPPER_clka_0",
+            "value_src": "default"
+          },
+          "FREQ_HZ": {
+            "value": "100000000",
+            "value_src": "default"
+          },
+          "FREQ_TOLERANCE_HZ": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.0",
+            "value_src": "default"
+          }
+        }
+      },
+      "clkb_0": {
+        "type": "clk",
+        "direction": "I",
+        "parameters": {
+          "CLK_DOMAIN": {
+            "value": "RAM_WRAPPER_clkb_0",
+            "value_src": "default"
+          },
+          "FREQ_HZ": {
+            "value": "100000000",
+            "value_src": "default"
+          },
+          "FREQ_TOLERANCE_HZ": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.0",
+            "value_src": "default"
+          }
+        }
+      },
+      "dina_0": {
+        "direction": "I",
+        "left": "95",
+        "right": "0"
+      },
+      "dinb_0": {
+        "direction": "I",
+        "left": "95",
+        "right": "0"
+      },
+      "douta_0": {
+        "direction": "O",
+        "left": "95",
+        "right": "0"
+      },
+      "doutb_0": {
+        "direction": "O",
+        "left": "95",
+        "right": "0"
+      },
+      "ena_0": {
+        "direction": "I"
+      },
+      "enb_0": {
+        "direction": "I"
+      },
+      "wea_0": {
+        "direction": "I",
+        "left": "0",
+        "right": "0"
+      },
+      "web_0": {
+        "direction": "I",
+        "left": "0",
+        "right": "0"
+      }
+    },
+    "components": {
+      "blk_mem_gen_0": {
+        "vlnv": "xilinx.com:ip:blk_mem_gen:8.4",
+        "ip_revision": "9",
+        "xci_name": "RAM_WRAPPER_blk_mem_gen_0_0",
+        "xci_path": "ip\\RAM_WRAPPER_blk_mem_gen_0_0\\RAM_WRAPPER_blk_mem_gen_0_0.xci",
+        "inst_hier_path": "blk_mem_gen_0",
+        "parameters": {
+          "Memory_Type": {
+            "value": "True_Dual_Port_RAM"
+          },
+          "PRIM_type_to_Implement": {
+            "value": "URAM"
+          },
+          "Write_Depth_A": {
+            "value": "384"
+          },
+          "Write_Width_A": {
+            "value": "96"
+          },
+          "use_bram_block": {
+            "value": "Stand_Alone"
+          }
+        }
+      }
+    },
+    "nets": {
+      "addra_0_1": {
+        "ports": [
+          "addra_0",
+          "blk_mem_gen_0/addra"
+        ]
+      },
+      "addrb_0_1": {
+        "ports": [
+          "addrb_0",
+          "blk_mem_gen_0/addrb"
+        ]
+      },
+      "blk_mem_gen_0_douta": {
+        "ports": [
+          "blk_mem_gen_0/douta",
+          "douta_0"
+        ]
+      },
+      "blk_mem_gen_0_doutb": {
+        "ports": [
+          "blk_mem_gen_0/doutb",
+          "doutb_0"
+        ]
+      },
+      "clka_0_1": {
+        "ports": [
+          "clka_0",
+          "blk_mem_gen_0/clka"
+        ]
+      },
+      "clkb_0_1": {
+        "ports": [
+          "clkb_0",
+          "blk_mem_gen_0/clkb"
+        ]
+      },
+      "dina_0_1": {
+        "ports": [
+          "dina_0",
+          "blk_mem_gen_0/dina"
+        ]
+      },
+      "dinb_0_1": {
+        "ports": [
+          "dinb_0",
+          "blk_mem_gen_0/dinb"
+        ]
+      },
+      "ena_0_1": {
+        "ports": [
+          "ena_0",
+          "blk_mem_gen_0/ena"
+        ]
+      },
+      "enb_0_1": {
+        "ports": [
+          "enb_0",
+          "blk_mem_gen_0/enb"
+        ]
+      },
+      "wea_0_1": {
+        "ports": [
+          "wea_0",
+          "blk_mem_gen_0/wea"
+        ]
+      },
+      "web_0_1": {
+        "ports": [
+          "web_0",
+          "blk_mem_gen_0/web"
+        ]
+      }
+    }
+  }
+}
