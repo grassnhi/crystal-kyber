@@ -1,0 +1,39 @@
+Reading OpenROAD database at '/home/npanh/openlane2/test_design/runs/RUN_2025-05-08_00-15-07/31-openroad-repairdesignpostgpl/pm32.odb'…
+Reading library file at '/home/npanh/.volare/volare/sky130/versions/0fe599b2afb6708d281543108caf8310912f54af/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib'…
+Reading design constraints file at '/nix/store/ss2cw3sxbrwwx9jl0rrppbw4kgcmgi2n-python3-3.11.9-env/lib/python3.11/site-packages/openlane/scripts/base.sdc'…
+[INFO] Using clock clk…
+[INFO] Setting output delay to: 5
+[INFO] Setting input delay to: 5
+[INFO] Setting load to: 0.033442
+[INFO] Setting clock uncertainty to: 0.25
+[INFO] Setting clock transition to: 0.1499999999999999944488848768742172978818416595458984375
+[INFO] Setting timing derate to: 5%
+Placement Analysis
+---------------------------------
+total displacement          0.0 u
+average displacement        0.0 u
+max displacement            0.0 u
+original HPWL           13155.2 u
+legalized HPWL          13791.7 u
+delta HPWL                    5 %
+
+[INFO DPL-0020] Mirrored 389 instances
+[INFO DPL-0021] HPWL before           13791.7 u
+[INFO DPL-0022] HPWL after            13155.2 u
+[INFO DPL-0023] HPWL delta               -4.6 %
+Setting global connections for newly added cells…
+[INFO] Setting global connections...
+Updating metrics…
+Cell type report:                       Count       Area
+  Fill cell                                92     345.33
+  Tap cell                                216     270.26
+  Timing Repair Buffer                    187     892.11
+  Inverter                                164     615.59
+  Sequential cell                         170    4214.04
+  Multi-Input combinational cell          348    2298.45
+  Total                                  1177    8635.78
+Writing OpenROAD database to '/home/npanh/openlane2/test_design/runs/RUN_2025-05-08_00-15-07/33-openroad-detailedplacement/pm32.odb'…
+Writing netlist to '/home/npanh/openlane2/test_design/runs/RUN_2025-05-08_00-15-07/33-openroad-detailedplacement/pm32.nl.v'…
+Writing powered netlist to '/home/npanh/openlane2/test_design/runs/RUN_2025-05-08_00-15-07/33-openroad-detailedplacement/pm32.pnl.v'…
+Writing layout to '/home/npanh/openlane2/test_design/runs/RUN_2025-05-08_00-15-07/33-openroad-detailedplacement/pm32.def'…
+Writing timing constraints to '/home/npanh/openlane2/test_design/runs/RUN_2025-05-08_00-15-07/33-openroad-detailedplacement/pm32.sdc'…

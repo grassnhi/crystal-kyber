@@ -1,0 +1,42 @@
+123. Printing statistics.
+
+=== BKyber ===
+
+   Number of wires:                624
+   Number of wire bits:            749
+   Number of public wires:         146
+   Number of public wire bits:     271
+   Number of ports:                  7
+   Number of port bits:            132
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                682
+     sky130_fd_sc_hd__a21o_2         2
+     sky130_fd_sc_hd__a21oi_2        3
+     sky130_fd_sc_hd__a221o_2        2
+     sky130_fd_sc_hd__a22o_2        66
+     sky130_fd_sc_hd__a2bb2o_2       1
+     sky130_fd_sc_hd__a31o_2         1
+     sky130_fd_sc_hd__and2_2         3
+     sky130_fd_sc_hd__and2b_2        1
+     sky130_fd_sc_hd__and3_2         4
+     sky130_fd_sc_hd__and3b_2        2
+     sky130_fd_sc_hd__and4_2         2
+     sky130_fd_sc_hd__dfrtp_2      162
+     sky130_fd_sc_hd__dfxtp_2        8
+     sky130_fd_sc_hd__inv_2        164
+     sky130_fd_sc_hd__nand2_2       95
+     sky130_fd_sc_hd__nand3_2        1
+     sky130_fd_sc_hd__nor2_2         6
+     sky130_fd_sc_hd__o21a_2         1
+     sky130_fd_sc_hd__o21ai_2       35
+     sky130_fd_sc_hd__o221a_2       29
+     sky130_fd_sc_hd__or2_2         61
+     sky130_fd_sc_hd__or4_2          1
+     sky130_fd_sc_hd__or4b_2         1
+     sky130_fd_sc_hd__xor2_2        31
+
+   Chip area for module '\BKyber': 8078.998400
+     of which used for sequential elements: 4426.745600 (54.79%)
+

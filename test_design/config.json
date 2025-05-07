@@ -1,0 +1,6 @@
+{
+    "DESIGN_NAME": "BKyber",
+    "VERILOG_FILES": ["dir::pm32.v", "dir::spm.v"],
+    "CLOCK_PERIOD": 10,
+    "CLOCK_PORT": "clk"
+  }

@@ -1,0 +1,4 @@
+
+16. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\pm32.\ncnt' from process `\pm32.$proc$/home/npanh/openlane2/test_design/pm32.v:41$5'.
+No latch inferred for signal `\pm32.\nstate' from process `\pm32.$proc$/home/npanh/openlane2/test_design/pm32.v:30$2'.
