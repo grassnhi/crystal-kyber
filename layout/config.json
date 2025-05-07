@@ -1,0 +1,17 @@
+{
+    "DESIGN_NAME": "BKyber",
+    "VERILOG_FILES": [  "dir::A_generator.v", "dir::add.v", "dir::addr_gen.v", 
+                        "dir::butterfly.v", "dir::butterfly_core.v", "dir::Chi.v", 
+                        "dir::coder.v", "dir::compress.v", "dir::controller.v", 
+                        "dir::decompress.v", "dir::fsm_rst.v", "dir::fsm_rst.v", 
+                        "dir::KECCAK_p.v", "dir::kyber.v", "dir::kyber_wrapper.v", 
+                        "dir::mini_fsm.v", "dir::mult.v", "dir::ntt_core.v", 
+                        "dir::ntt_rom.v", "dir::Pi.v", "dir::reduce.v", 
+                        "dir::register.v", "dir::Rho.v", "dir::Rnd.v", 
+                        "dir::SHA3_512.v", "dir::SHAKE_128.v", "dir::SHAKE_256.v", 
+                        "dir::small_poly_generator.v", "dir::sub.v", "dir::test_kyber.v", 
+                        "dir::Theta.v", "dir::top.v", "dir::top_test.v", "dir::twiddle_factor.v",
+                        "dir::crystal_kyber_wrapper.v", "dir::NTT_RAM_wrapper.v", "dir::RAM_WRAPPER_wrapper.v"],
+    "CLOCK_PERIOD": 10,
+    "CLOCK_PORT": ["clka_0", "clka_1", "clka_2"]
+}

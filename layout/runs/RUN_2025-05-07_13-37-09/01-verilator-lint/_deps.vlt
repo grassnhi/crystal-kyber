@@ -1,0 +1,5 @@
+`verilator_config
+lint_off -rule DECLFILENAME
+lint_off -rule EOFNEWLINE
+lint_off -rule UNDRIVEN -file "/home/npanh/openlane2/crystal-kyber/layout/runs/RUN_2025-05-07_13-37-09/tmp/59a42424f08b4ff2a9204abfb80ea000.bb.v"
+lint_off -rule UNUSEDSIGNAL -file "/home/npanh/openlane2/crystal-kyber/layout/runs/RUN_2025-05-07_13-37-09/tmp/59a42424f08b4ff2a9204abfb80ea000.bb.v"
